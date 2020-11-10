@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Blackjack!</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
+<script type="text/javascript">
+function SaveName(){
+    //get user's name and save in local storage along with starting money amount
+
+  
+       
+}
+function startGame(){
+ 
+    window.location.href="game.html";
+}
+function getLocation() {
+      //call geolocationAPI to get user's location and decide currency. If Europe, use euro symbol, else use US dollar
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition,showError);
+  } else {
+     
+      //display radio buttons to allow user to specify their currency
+      var obj=document.getElementById("dvCurrencyChoice");
+      obj.classList.remove("d-none");
+  
+  }
+}
+
+function showPosition(position) {
+  console.log("Latitude: " + position.coords.latitude +  " Longitude: " + position.coords.longitude);
+}
+function showError(error) {
+  switch(error.code) {
+    case error.PERMISSION_DENIED:
+    var obj=document.getElementById("dvCurrencyChoice");
+      obj.classList.remove("d-none");
+      break;
+    case error.POSITION_UNAVAILABLE:
+    var obj=document.getElementById("dvCurrencyChoice");
+      obj.classList.remove("d-none");
+      break;
+    case error.TIMEOUT:
+    var obj=document.getElementById("dvCurrencyChoice");
+      obj.classList.remove("d-none");
+      break;
+    case error.UNKNOWN_ERROR:
+    var obj=document.getElementById("dvCurrencyChoice");
+      obj.classList.remove("d-none");
+      break;
+  }
+}
+</script>
+</head>
+<body onload="getLocation()">
+<div id="container">
+<div class="row">
+    <div class="col">
+        <h2>Blackjack!</h2>
+    </div>
+</div>
+<div class="row pt-3">
+    <div class="col">
+        <label for="txtUsername">Enter your user name:</label>
+        <input type="text" id="txtUsername" />
+        <input type="button" value="Enter" onclick="SaveName()">
+    </div>
+</div>
+<div id="dvCurrencyChoice" class="row pt-3 d-none">
+    <div class="col">
+        <label for="rdoCurrency">Choose your Currency:</label>
+        <input type="radio" name="rdoCurrency" id="rdoUSD" /> US Dollars ($)
+    </div>
+    <div class="col">
+        <input type="radio" name="rdoCurrency" id="rdoEuro" /> Euro (&euro;)
+    </div>
+</div>
+<div class="row pt-3">
+    <div class="col">
+            <input type="button" value="Start Game" onclick="startGame()">
+    </div>
+</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+
+
+</body>
+</html>
