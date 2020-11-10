@@ -9,7 +9,7 @@ This repository is for the IT3049C final project.
 - [x] Start page skeleton - Tony 
 - [x] Game page skeleton - Tony 
 - [x] Geolocation call – Tony 
-- [ ] Create Git repository to share project files -Max 
+- [x] Create Git repository to share project files -Max 
 
 ### Code Implementation
 - [ ] Geolocation – function to determine if longitude and latitude is within Europe, or not. 
