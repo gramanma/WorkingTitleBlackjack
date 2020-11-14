@@ -6,12 +6,50 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script> 
 <script type="text/javascript">
-function SaveName(){
-    //get user's name and save in local storage along with starting money amount
-
-  
-       
+function loadFunctions(){
+getLocation();
+setName();
 }
+
+function setName(){
+  var nameInput=document.getElementById("txtUsername");
+  var nameButton=document.getElementById("nameSaveButton");
+  var startButton=document.getElementById("startButton");
+if(localStorage.getItem("userName")){
+  nameInput.value = localStorage.getItem("userName");
+  nameButton.disabled = false;
+  startButton.disabled = false;
+ }else{
+nameButton.disabled = true;
+startButton.disabled = true;
+ }
+}
+
+function nameCheck(){
+  var nameInput=document.getElementById("txtUsername");
+  var nameButton=document.getElementById("nameSaveButton");
+  if(nameInput.value === ""){
+  nameButton.disabled = true;
+  }
+  else{
+    nameButton.disabled = false;
+  }
+}
+
+function SaveName(){
+  var startButton=document.getElementById("startButton");
+  var nameInput=document.getElementById("txtUsername");
+  var nameButton=document.getElementById("nameSaveButton");
+  if(nameInput.value !== ""){
+  localStorage.setItem("userName",nameInput.value);
+  startButton.disabled = false;
+  }
+  else{
+nameButton.disabled = true;
+  }
+  }
+       
+
 function startGame(){
  
     window.location.href="game.html";
@@ -28,11 +66,11 @@ locationUnavailable();
 }
 
 function showPosition(position) {
-      var lat = position.coords.latitude;
-      var lng = position.coords.longitude;
-      var coordinates = [lat, lng]; 
+  //creating reverse geocode query
       var latitude = "latitude=" + position.coords.latitude;
       var longitude = "&longitude=" + position.coords.longitude;
+     // var latitude = "latitude=" +  48.864716;
+     // var longitude = "&longitude=" + 2.349014;
       var query = latitude + longitude + "&localityLanguage=en";
       const Http = new XMLHttpRequest();
       var bigdatacloud_api =
@@ -44,6 +82,17 @@ function showPosition(position) {
         if (this.readyState == 4 && this.status == 200) {
           var myObj = JSON.parse(this.responseText);
           console.log("Your Location  " + myObj.continent + ":" + myObj.countryName);
+          if((myObj.continentCode === "NA" && myObj.countryCode === "US") || myObj.continent === "Europe"){
+           if(myObj.countryCode === "US"){
+             localStorage.setItem("currencySymbol","$")
+           }
+           else{
+            localStorage.setItem("currencySymbol","€")
+           }
+          }
+          else{
+            locationUnavailable(false);
+          }
         }
       };
 }
@@ -53,10 +102,12 @@ function findCountry(lat,long){
 
 }
 
-function locationUnavailable(){
+function locationUnavailable(notAvailable = true){
   var obj=document.getElementById("dvCurrencyChoice");
-      obj.classList.remove("d-none");
+      obj.classList.remove("d-none"); 
+      if(notAvailable){
       console.log("location unavailable");
+      }
 }
 
 function showError(error) {
@@ -81,7 +132,7 @@ function showError(error) {
 }
 </script>
 </head>
-<body onload="getLocation()">
+<body onload="loadFunctions()">
 <div id="container">
 <div class="row">
     <div class="col">
@@ -91,8 +142,8 @@ function showError(error) {
 <div class="row pt-3">
     <div class="col">
         <label for="txtUsername">Enter your user name:</label>
-        <input type="text" id="txtUsername" />
-        <input type="button" value="Enter" onclick="SaveName()">
+        <input type="text" id="txtUsername" onkeyup="nameCheck()" />
+        <input type="button" id="nameSaveButton" value="Enter" onclick="SaveName()">
     </div>
 </div>
 <div id="dvCurrencyChoice" class="row pt-3 d-none">
@@ -106,7 +157,7 @@ function showError(error) {
 </div>
 <div class="row pt-3">
     <div class="col">
-            <input type="button" value="Start Game" onclick="startGame()">
+            <input type="button" id="startButton" value="Start Game" onclick="startGame()">
     </div>
 </div>
 </div>
