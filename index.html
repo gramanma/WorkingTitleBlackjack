@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <title>Blackjack!</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script> 
 <script type="text/javascript">
 function SaveName(){
     //get user's name and save in local storage along with starting money amount
@@ -20,17 +21,44 @@ function getLocation() {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(showPosition,showError);
   } else {
-     
       //display radio buttons to allow user to specify their currency
-      var obj=document.getElementById("dvCurrencyChoice");
-      obj.classList.remove("d-none");
+locationUnavailable();
   
   }
 }
 
 function showPosition(position) {
-  console.log("Latitude: " + position.coords.latitude +  " Longitude: " + position.coords.longitude);
+      var lat = position.coords.latitude;
+      var lng = position.coords.longitude;
+      var coordinates = [lat, lng]; 
+      var latitude = "latitude=" + position.coords.latitude;
+      var longitude = "&longitude=" + position.coords.longitude;
+      var query = latitude + longitude + "&localityLanguage=en";
+      const Http = new XMLHttpRequest();
+      var bigdatacloud_api =
+        "https://api.bigdatacloud.net/data/reverse-geocode-client?";
+      bigdatacloud_api += query;
+      Http.open("GET", bigdatacloud_api);
+      Http.send();
+      Http.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          var myObj = JSON.parse(this.responseText);
+          console.log("Your Location  " + myObj.continent + ":" + myObj.countryName);
+        }
+      };
 }
+
+function findCountry(lat,long){
+
+
+}
+
+function locationUnavailable(){
+  var obj=document.getElementById("dvCurrencyChoice");
+      obj.classList.remove("d-none");
+      console.log("location unavailable");
+}
+
 function showError(error) {
   switch(error.code) {
     case error.PERMISSION_DENIED:
