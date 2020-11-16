@@ -24,7 +24,7 @@ This repository is for the IT3049C final project.
 - [x] Styling of start page -Max 
 - [x] "Hit" - create a button image -Max
 - [x] "Stay" - create a button image -Max
-- [ ] Card dealing/flipping sound -Max
+- [x] Card dealing/flipping sound -Max
 - [ ] Card flip animation
 
 ### Mechanics
