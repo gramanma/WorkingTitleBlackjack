@@ -35,6 +35,17 @@ var game = new Phaser.Game(config);
         this.add.image(120, 150, 'cardback');
 
         deck=shuffleDeck(deck);
+       
+        // this.input.mouse.disableContextMenu();
+
+        // this.input.on('pointerup', function (pointer) {
+
+        //     if (pointer.leftButtonReleased())
+        //     {
+               
+        //     }
+        // }
+
       //  deck.forEach(element =>{
        // console.log(element);
       //  });
@@ -44,6 +55,7 @@ var game = new Phaser.Game(config);
 
     function update ()
     {
+        var pointer = this.input.activePointer;
 
     }
 

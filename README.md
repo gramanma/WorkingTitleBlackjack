@@ -25,11 +25,13 @@ This repository is for the IT3049C final project.
 - [ ] "Stay" - create a button image -Max
 - [ ] Card dealing/flipping sound -Max
 - [ ] Card flip animation -Max
+- [ ] Right and Left facing triangle to increase/decrease bet amount
 
 ### Mechanics
-- [x] Handle user input via mouse click 
+- [ ] Handle user input via mouse click 
+- [ ] Add event listeners for clicks on button images 
 - [ ] Betting mechanism – increments of $10 up to current total 
-- [ ] Increase/decrease about in $10 increments. Bet Amount shows between 2 outward facing triangles that increase/decrease amount 
+- [ ] Increase/decrease amount in $10 increments. Bet Amount shows between 2 outward facing triangles that increase/decrease amount 
 - [ ] Amount bet cannot be changed once cards are dealt 
 - [ ] Remove cards from current deck array as they are dealt 
 - [x] Shuffling of card array - Tony 

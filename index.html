@@ -5,6 +5,7 @@
     <title>Blackjack!</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
 <script type="text/javascript">
+let currencycode="$";
 function SaveName(){
     //get user's name and save in local storage along with starting money amount
 
@@ -17,6 +18,7 @@ function startGame(){
 }
 function getLocation() {
       //call geolocationAPI to get user's location and decide currency. If Europe, use euro symbol, else use US dollar
+   //   GET https://api.ipgeolocationapi.com/geolocate HTTP/1.1
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(showPosition,showError);
   } else {
@@ -28,7 +30,43 @@ function getLocation() {
   }
 }
 
+async function fetchCurrency() {
+  var endpoint = 'http://ip-api.com/json/?fields=status,message,continent';
+
+var xhr = new XMLHttpRequest();
+xhr.onreadystatechange = function() {
+	if (this.readyState == 4 && this.status == 200) {
+		var response = JSON.parse(this.responseText);
+		if(response.status !== 'success') {
+			console.log('query failed: ' + response.message);
+			return
+		}
+    
+    if(response.continent==="Europe"){
+      currencycode="&euro;";
+    }
+    //console.log(currencycode);
+	
+	}
+};
+xhr.open('GET', endpoint, true);
+xhr.send();
+  //  // let response = await fetch("https://api.ipgeolocationapi.com/geolocate");
+  //  let response = await fetch("http://ip-api.com/json/?fields=status,message,continent");
+   
+  //  // 200
+  //   //console.log(response.statusText); // OK
+
+  //   if (response.status === 200) {
+  //     console.log(response); 
+  //       let data = await response.text();
+  //       // handle data
+       
+  //   }
+}
+
 function showPosition(position) {
+  console.log(position);
   console.log("Latitude: " + position.coords.latitude +  " Longitude: " + position.coords.longitude);
 }
 function showError(error) {
@@ -53,7 +91,7 @@ function showError(error) {
 }
 </script>
 </head>
-<body onload="getLocation()">
+<body onload="fetchCurrency()">
 <div id="container">
 <div class="row">
     <div class="col">
