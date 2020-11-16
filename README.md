@@ -20,12 +20,12 @@ This repository is for the IT3049C final project.
 
 ### Art Implementation
 - [ ] Background image for start page- Max 
-- [ ] Background image for game page - Max 
+- [x] Background image for game page - Max 
 - [ ] Styling of start page -Max 
 - [ ] "Hit" - create a button image -Max
 - [ ] "Stay" - create a button image -Max
 - [ ] Card dealing/flipping sound -Max
-- [ ] Card flip animation -Max
+- [ ] Card flip animation
 
 ### Mechanics
 - [x] Handle user input via mouse click 
