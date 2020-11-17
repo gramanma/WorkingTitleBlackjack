@@ -41,7 +41,7 @@ This repository is for the IT3049C final project.
 - [ ] Check if over 21 
 - [ ] Check if 5 cards without going over 21 
 - [ ] If user stays, determine if dealer will take extra cards or stay 
-- [ ] Determine outcome of game 
+- [ ] Determine outcome of game - Tony
 
 ---
 
