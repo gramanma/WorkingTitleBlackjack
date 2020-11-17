@@ -17,17 +17,17 @@ This repository is for the IT3049C final project.
 - [ ] Function to store/pull username, money, currency and possibly selected deck color 
 - [x] Images of cards- Tony 
 - [x] Images of cards- Tony Scale images to fit phaser frame - Tony 
+- [ ] Card flip animation
 
 ### Art Implementation
 
-- [ ] Right and Left facing triangle to increase/decrease bet  -Max
+- [x] Right and Left facing triangle to increase/decrease bet  -Max
 - [x] Background image for start page- Max 
 - [x] Background image for game page - Max 
 - [x] Styling of start page -Max 
 - [x] "Hit" - create a button image -Max
 - [x] "Stay" - create a button image -Max
 - [x] Card dealing/flipping sound -Max
-- [ ] Card flip animation
 
 ### Mechanics
 - [ ] Handle user input via mouse click 
