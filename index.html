@@ -9,20 +9,15 @@
 function loadFunctions(){
 getLocation();
 setName();
+startCheck();
 }
 
+//will set usersName into field if it already exists in local storage
 function setName(){
-  var nameInput=document.getElementById("txtUsername");
   var nameButton=document.getElementById("nameSaveButton");
-  var startButton=document.getElementById("startButton");
-if(localStorage.getItem("userName")){
-  nameInput.value = localStorage.getItem("userName");
-  nameButton.disabled = false;
-  startButton.disabled = false;
- }else{
-nameButton.disabled = true;
-startButton.disabled = true;
- }
+  var userName=document.getElementById("currentUserName");
+  userName.innerText = localStorage.getItem("userName");
+  nameButton.disabled = true;
 }
 
 function nameCheck(){
@@ -37,16 +32,17 @@ function nameCheck(){
 }
 
 function SaveName(){
-  var startButton=document.getElementById("startButton");
   var nameInput=document.getElementById("txtUsername");
   var nameButton=document.getElementById("nameSaveButton");
+  userName=document.getElementById("currentUserName");
   if(nameInput.value !== ""){
   localStorage.setItem("userName",nameInput.value);
-  startButton.disabled = false;
+  userName.innerText = localStorage.getItem("userName");
   }
   else{
 nameButton.disabled = true;
   }
+  startCheck();
   }
        
 
@@ -55,6 +51,8 @@ function startGame(){
     window.location.href="game.html";
 }
 function getLocation() {
+  //reset currencySymbol
+  localStorage.setItem("currencySymbol","")
       //call geolocationAPI to get user's location and decide currency. If Europe, use euro symbol, else use US dollar
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(showPosition,showError);
@@ -91,45 +89,73 @@ function showPosition(position) {
            }
           }
           else{
-            locationUnavailable(false);
+            locationUnavailable();
           }
         }
+        startCheck();
       };
 }
 
-function findCountry(lat,long){
 
-
-}
-
-function locationUnavailable(notAvailable = true){
+//will run if location is not available or isnt US/Europe
+function locationUnavailable(){
   var obj=document.getElementById("dvCurrencyChoice");
       obj.classList.remove("d-none"); 
-      if(notAvailable){
-      console.log("location unavailable");
-      }
+  localStorage.setItem("currencySymbol","");
+  startCheck();
+}
+
+//on rdoButtonChange
+function rdoChange(radio){
+  localStorage.setItem("currencySymbol",radio.value);
+  startCheck();
 }
 
 function showError(error) {
   switch(error.code) {
     case error.PERMISSION_DENIED:
-    var obj=document.getElementById("dvCurrencyChoice");
-      obj.classList.remove("d-none");
+    locationUnavailable();
       break;
     case error.POSITION_UNAVAILABLE:
-    var obj=document.getElementById("dvCurrencyChoice");
-      obj.classList.remove("d-none");
+    locationUnavailable();
       break;
     case error.TIMEOUT:
-    var obj=document.getElementById("dvCurrencyChoice");
-      obj.classList.remove("d-none");
+    locationUnavailable();
       break;
     case error.UNKNOWN_ERROR:
-    var obj=document.getElementById("dvCurrencyChoice");
-      obj.classList.remove("d-none");
+    locationUnavailable();
       break;
   }
 }
+
+//will determine if start button can be clicked and what errors are shown
+function startCheck(){
+  var currencyError=document.getElementById("currencyError");
+  var startButton=document.getElementById("startButton");
+  var nameError=document.getElementById("nameError");
+  var valid = true;
+if(localStorage.getItem("userName") && localStorage.getItem("userName") != ""){
+nameError.classList.add('d-none');
+}
+else{
+valid = false;
+nameError.classList.remove('d-none');
+}
+if(localStorage.getItem("currencySymbol") !== ""){
+currencyError.classList.add('d-none');
+}
+else{
+  valid = false;
+  currencyError.classList.remove('d-none');
+}
+if(valid){
+  startButton.disabled = false;
+}
+else{
+  startButton.disabled = true;
+}
+}
+
 </script>
 </head>
 <body onload="loadFunctions()">
@@ -139,9 +165,13 @@ function showError(error) {
         <h2>Blackjack!</h2>
     </div>
 </div>
+<div>
+      <label>UserName: </label> 
+      <label id="currentUserName"></label>
+</div>
 <div class="row pt-3">
     <div class="col">
-        <label for="txtUsername">Enter your user name:</label>
+        <label for="txtUsername">Enter your desired user name:</label>
         <input type="text" id="txtUsername" onkeyup="nameCheck()" />
         <input type="button" id="nameSaveButton" value="Enter" onclick="SaveName()">
     </div>
@@ -149,10 +179,10 @@ function showError(error) {
 <div id="dvCurrencyChoice" class="row pt-3 d-none">
     <div class="col">
         <label for="rdoCurrency">Choose your Currency:</label>
-        <input type="radio" name="rdoCurrency" id="rdoUSD" /> US Dollars ($)
+        <input type="radio" name="rdoCurrency" value="$" id="rdoUSD" onclick="rdoChange(this)"/> US Dollars ($)
     </div>
     <div class="col">
-        <input type="radio" name="rdoCurrency" id="rdoEuro" /> Euro (&euro;)
+        <input type="radio" name="rdoCurrency" value="€" id="rdoEuro" onclick="rdoChange(this)"/> Euro (&euro;)
     </div>
 </div>
 <div class="row pt-3">
@@ -160,6 +190,11 @@ function showError(error) {
             <input type="button" id="startButton" value="Start Game" onclick="startGame()">
     </div>
 </div>
+<div>
+  <p id="nameError"  style="color: red; margin-bottom: 0;">* Please enter a Name</p>
+</div>
+<div>
+  <p id="currencyError"  style="color: red; margin-bottom: 0;">* Please choose a Currency</p>
 </div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
