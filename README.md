@@ -12,12 +12,18 @@ This repository is for the IT3049C final project.
 - [x] Create Git repository to share project files -Max 
 
 ### Code Implementation
+<<<<<<< HEAD
 - [x] Geolocation – function to determine if longitude and latitude is within Europe, or not. 
+=======
+- [x] Geolocation – function to determine if longitude and latitude is within Europe, or not. -mike
+- [x] validations for currency/name selection -mike(in progress)
+>>>>>>> 97a0a18323f14d7806657372750c5509bc27467c
 - [ ] Function to store/pull username, money, currency and possibly selected deck color 
 - [x] Images of cards- Tony 
 - [x] Images of cards- Tony Scale images to fit phaser frame - Tony 
 
 ### Art Implementation
+<<<<<<< HEAD
 - [ ] Background image for start page- Max 
 - [ ] Background image for game page - Max 
 - [ ] Styling of start page -Max 
@@ -26,6 +32,15 @@ This repository is for the IT3049C final project.
 - [ ] Card dealing/flipping sound -Max
 - [ ] Card flip animation -Max
 - [ ] Right and Left facing triangle to increase/decrease bet amount
+=======
+- [x] Background image for start page- Max 
+- [x] Background image for game page - Max 
+- [x] Styling of start page -Max 
+- [x] "Hit" - create a button image -Max
+- [x] "Stay" - create a button image -Max
+- [x] Card dealing/flipping sound -Max
+- [ ] Card flip animation
+>>>>>>> 97a0a18323f14d7806657372750c5509bc27467c
 
 ### Mechanics
 - [ ] Handle user input via mouse click 

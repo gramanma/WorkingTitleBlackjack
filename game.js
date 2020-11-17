@@ -12,7 +12,8 @@ var config = {
 let deck=[];
 
 //will grab currency specified from local storage
-let currency="$";
+let currency=localStorage.getItem("currencySymbol");
+
 
 var game = new Phaser.Game(config);
 
