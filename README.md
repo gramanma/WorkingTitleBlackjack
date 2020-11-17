@@ -12,7 +12,7 @@ This repository is for the IT3049C final project.
 - [x] Create Git repository to share project files -Max 
 
 ### Code Implementation
-- [ ] Geolocation – function to determine if longitude and latitude is within Europe, or not. 
+- [x] Geolocation – function to determine if longitude and latitude is within Europe, or not. 
 - [ ] Function to store/pull username, money, currency and possibly selected deck color 
 - [x] Images of cards- Tony 
 - [x] Images of cards- Tony Scale images to fit phaser frame - Tony 
