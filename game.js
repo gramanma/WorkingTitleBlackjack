@@ -10,6 +10,8 @@ var config = {
 };
 
 let deck=[];
+let player_hand=[];
+let dealer_hand=[];
 
 //will grab currency specified from local storage
 let currency=localStorage.getItem("currencySymbol");
