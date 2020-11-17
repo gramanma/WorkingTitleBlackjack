@@ -1,117 +1,117 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <title>Blackjack!</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
     <link rel="stylesheet" href="styles/style.css">
-<script type="text/javascript">
-let currencycode="$";
+    <script type="text/javascript">
+        let currencycode = "$";
 
-function startGame(){
+        function startGame() {
 
-    window.location.href="game.html";
-}
+            window.location.href = "game.html";
+        }
 
-function loadFunctions() {
-              fetchCurrency();
-                setName();
-}
+        function loadFunctions() {
+            fetchCurrency();
+            setName();
+        }
 
-              function setName() {
-                var nameInput=document.getElementById("txtUsername");
-                var nameButton=document.getElementById("nameSaveButton");
-                var startButton=document.getElementById("startButton");
-                if(localStorage.getItem("userName")) {
-                  nameInput.value = localStorage.getItem("userName");
-                  nameButton.disabled = false;
-                  startButton.disabled = false;
-                } else {
-                  nameButton.disabled = true;
-                  startButton.disabled = true;
-                }
-              }
-
-              function nameCheck(){
-                var nameInput=document.getElementById("txtUsername");
-                var nameButton=document.getElementById("nameSaveButton");
-                if(nameInput.value === ""){
+        function setName() {
+            var nameInput = document.getElementById("txtUsername");
+            var nameButton = document.getElementById("nameSaveButton");
+            var startButton = document.getElementById("startButton");
+            if (localStorage.getItem("userName")) {
+                nameInput.value = localStorage.getItem("userName");
+                nameButton.disabled = false;
+                startButton.disabled = false;
+            } else {
                 nameButton.disabled = true;
+                startButton.disabled = true;
+            }
+        }
+
+        function nameCheck() {
+            var nameInput = document.getElementById("txtUsername");
+            var nameButton = document.getElementById("nameSaveButton");
+            if (nameInput.value === "") {
+                nameButton.disabled = true;
+            }
+            else {
+                nameButton.disabled = false;
+            }
+        }
+
+        function SaveName() {
+            var startButton = document.getElementById("startButton");
+            var nameInput = document.getElementById("txtUsername");
+            var nameButton = document.getElementById("nameSaveButton");
+            if (nameInput.value !== "") {
+                localStorage.setItem("userName", nameInput.value);
+                startButton.disabled = false;
+            } else {
+                nameButton.disabled = true;
+            }
+        }
+
+        async function fetchCurrency() {
+            var endpoint = 'http://ip-api.com/json/?fields=status,message,continent';
+
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var response = JSON.parse(this.responseText);
+                    console.log(this.responseText);
+                    if (response.status !== 'success') {
+                        console.log('query failed: ' + response.message);
+                        showError(error);
+                        return
+                    }
+
+                    if (response.continent === "Europe") {
+                        currencycode = "&euro;";
+                    }
+
+
                 }
-                else{
-                  nameButton.disabled = false;
-                }
-              }
+            };
+            xhr.open('GET', endpoint, true);
+            xhr.send();
 
-              function SaveName(){
-                var startButton=document.getElementById("startButton");
-                var nameInput=document.getElementById("txtUsername");
-                var nameButton=document.getElementById("nameSaveButton");
-                if(nameInput.value !== ""){
-                  localStorage.setItem("userName",nameInput.value);
-                  startButton.disabled = false;
-                } else {
-                  nameButton.disabled = true;
-                }
-              }
+        }
 
-async function fetchCurrency() {
-  var endpoint = 'http://ip-api.com/json/?fields=status,message,continent';
-
-var xhr = new XMLHttpRequest();
-xhr.onreadystatechange = function() {
-	if (this.readyState == 4 && this.status == 200) {
-    var response = JSON.parse(this.responseText);
-    console.log(this.responseText);
-		if(response.status !== 'success') {
-      console.log('query failed: ' + response.message);
-      showError(error);
-			return
-		}
-
-    if(response.continent==="Europe"){
-      currencycode="&euro;";
-    }
-
-
-	}
-};
-xhr.open('GET', endpoint, true);
-xhr.send();
-
-}
-
-function showError(error) {
-  switch(error.code) {
-    case error.PERMISSION_DENIED:
-    var obj=document.getElementById("dvCurrencyChoice");
-      obj.classList.remove("d-none");
-      break;
-    case error.POSITION_UNAVAILABLE:
-    var obj=document.getElementById("dvCurrencyChoice");
-      obj.classList.remove("d-none");
-      break;
-    case error.TIMEOUT:
-    var obj=document.getElementById("dvCurrencyChoice");
-      obj.classList.remove("d-none");
-      break;
-    case error.UNKNOWN_ERROR:
-    var obj=document.getElementById("dvCurrencyChoice");
-      obj.classList.remove("d-none");
-      break;
-  }
-}
-</script>
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    var obj = document.getElementById("dvCurrencyChoice");
+                    obj.classList.remove("d-none");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    var obj = document.getElementById("dvCurrencyChoice");
+                    obj.classList.remove("d-none");
+                    break;
+                case error.TIMEOUT:
+                    var obj = document.getElementById("dvCurrencyChoice");
+                    obj.classList.remove("d-none");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    var obj = document.getElementById("dvCurrencyChoice");
+                    obj.classList.remove("d-none");
+                    break;
+            }
+        }
+    </script>
 </head>
 <body class="text-center" onload="loadFunctions()">
-  <div id="container">
-      <header class="masthead mb-auto">
-        <div>
-            <div class="col">
-                <h1 class="cover-heading">Blackjack!</h1>
+    <div id="container">
+        <header class="masthead mb-auto">
+            <div>
+                <div class="col">
+                    <h1 class="cover-heading">Blackjack!</h1>
+                </div>
             </div>
-        </div>
-      </header>
+        </header>
         <div class="row pt-3">
             <div class="col">
                 <label for="txtUsername">Username: </label>
@@ -130,14 +130,14 @@ function showError(error) {
 
         <div class="row pt-3">
             <div class="col">
-                    <input type="button" class="btn btn-lg btn-secondary" id="startButton" value="Start Game" onclick="startGame()">
+                <input type="button" class="btn btn-lg btn-secondary" id="startButton" value="Start Game" onclick="startGame()">
             </div>
         </div>
 
-  </div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 
 </body>
 </html>
