@@ -22,8 +22,8 @@ var game = new Phaser.Game(config);
       
         this.load.image('tabletop', 'assets/tabletop.png');
         this.load.image('cardback', 'assets/redback.png');
-        this.load.image('hitButton','assets.hitButton.PNG')
-        this.load.image('stayButton','assets.stayButton.PNG')
+        this.load.image('hitButton','assets/hitButton.PNG')
+        this.load.image('stayButton','assets/stayButton.PNG')
         freshDeck();
         deck.forEach(element => {
             this.load.image(element, 'assets/' + element + '.png');
@@ -39,10 +39,10 @@ var game = new Phaser.Game(config);
 
        var hitButton = this.add.image(300, 225, 'hitButton');
        hitButton.setInteractive({useHandCursor: true});
-       hitButton.on('pointerdown', () => this.clickHit());
+       hitButton.on('pointerdown', () => hitClick());
        var stayButton = this.add.image(300, 225, 'stayButton');
        stayButton.setInteractive({useHandCursor: true});
-       stayButton.on('pointerdown', () => this.clickStay());
+       stayButton.on('pointerdown', () => stayClick());
 
         deck=shuffleDeck(deck);
       //  deck.forEach(element =>{
@@ -88,10 +88,10 @@ var game = new Phaser.Game(config);
       
     }
 
-    function clickHit(){
-
+    function hitClick(){
+        console.log('hit');
     }
 
-    function clickStay(){
-        
+    function stayClick(){
+        console.log('stay');
     }
