@@ -4,202 +4,187 @@
     <meta charset="utf-8" />
     <title>Blackjack!</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
-    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script> 
-<script type="text/javascript">
-function loadFunctions(){
-getLocation();
-setName();
-startCheck();
-}
+    <link rel="stylesheet" href="styles/style.css">
+    <script type="text/javascript">
+        let currencycode = "$";
 
-//will set usersName into field if it already exists in local storage
-function setName(){
-  var nameButton=document.getElementById("nameSaveButton");
-  var userName=document.getElementById("currentUserName");
-  userName.innerText = localStorage.getItem("userName");
-  nameButton.disabled = true;
-}
+        function startGame() {
+          startCheck();
+          if(localStorage.getItem("userName")){
+          window.location.href="game.html";
+          }
+          var userName=document.getElementById("currentUserName");
+          userName.innerText = localStorage.getItem("userName");
+        }
 
-function nameCheck(){
-  var nameInput=document.getElementById("txtUsername");
-  var nameButton=document.getElementById("nameSaveButton");
-  if(nameInput.value === ""){
-  nameButton.disabled = true;
-  }
-  else{
-    nameButton.disabled = false;
-  }
-}
+        function loadFunctions() {
+            fetchCurrency();
+            setName();
+            startCheck();
+        }
 
-function SaveName(){
-  var nameInput=document.getElementById("txtUsername");
-  var nameButton=document.getElementById("nameSaveButton");
-  userName=document.getElementById("currentUserName");
-  if(nameInput.value !== ""){
-  localStorage.setItem("userName",nameInput.value);
-  userName.innerText = localStorage.getItem("userName");
-  }
-  else{
-nameButton.disabled = true;
-  }
-  startCheck();
-  }
-       
+        function setName() {
+          var nameInput=document.getElementById("txtUsername");
+          var nameButton=document.getElementById("nameSaveButton");
+          var userName=document.getElementById("currentUserName");
+          userName.innerText = localStorage.getItem("userName");
+          startCheck();
+        }
 
-function startGame(){
- 
-    window.location.href="game.html";
-}
-function getLocation() {
-  //reset currencySymbol
-  localStorage.setItem("currencySymbol","")
-      //call geolocationAPI to get user's location and decide currency. If Europe, use euro symbol, else use US dollar
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(showPosition,showError);
-  } else {
-      //display radio buttons to allow user to specify their currency
-locationUnavailable();
-  
-  }
-}
+        function nameCheck() {
+            var nameInput = document.getElementById("txtUsername");
+            var nameButton = document.getElementById("nameSaveButton");
+            if (nameInput.value === "") {
+                nameButton.disabled = true;
+            }
+            else {
+                nameButton.disabled = false;
+            }
+        }
 
-function showPosition(position) {
-  //creating reverse geocode query
-      var latitude = "latitude=" + position.coords.latitude;
-      var longitude = "&longitude=" + position.coords.longitude;
-     // var latitude = "latitude=" +  48.864716;
-     // var longitude = "&longitude=" + 2.349014;
-      var query = latitude + longitude + "&localityLanguage=en";
-      const Http = new XMLHttpRequest();
-      var bigdatacloud_api =
-        "https://api.bigdatacloud.net/data/reverse-geocode-client?";
-      bigdatacloud_api += query;
-      Http.open("GET", bigdatacloud_api);
-      Http.send();
-      Http.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          var myObj = JSON.parse(this.responseText);
-          console.log("Your Location  " + myObj.continent + ":" + myObj.countryName);
-          if((myObj.continentCode === "NA" && myObj.countryCode === "US") || myObj.continent === "Europe"){
-           if(myObj.countryCode === "US"){
-             localStorage.setItem("currencySymbol","$")
-           }
-           else{
-            localStorage.setItem("currencySymbol","€")
-           }
+        function SaveName() {
+          var nameInput=document.getElementById("txtUsername");
+          var nameButton=document.getElementById("nameSaveButton");
+          userName=document.getElementById("currentUserName");
+          if(nameInput.value !== ""){
+          localStorage.setItem("userName",nameInput.value);
+          userName.innerText = localStorage.getItem("userName");
           }
           else{
-            locationUnavailable();
+            nameButton.disabled = true;
           }
+          startCheck();
         }
-        startCheck();
-      };
-}
+
+        async function fetchCurrency() {
+            var endpoint = 'http://ip-api.com/json/?fields=status,message,continent';
+
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var response = JSON.parse(this.responseText);
+                    console.log(this.responseText);
+                    if (response.status !== 'success') {
+                        console.log('query failed: ' + response.message);
+                        showError(error);
+                        return
+                    }
+
+                    if (response.continent === "Europe") {
+                        currencycode = "&euro;";
+                    }
 
 
-//will run if location is not available or isnt US/Europe
-function locationUnavailable(){
-  var obj=document.getElementById("dvCurrencyChoice");
-      obj.classList.remove("d-none"); 
-  localStorage.setItem("currencySymbol","");
-  startCheck();
-}
+                }
+            };
+            xhr.open('GET', endpoint, true);
+            xhr.send();
 
-//on rdoButtonChange
-function rdoChange(radio){
-  localStorage.setItem("currencySymbol",radio.value);
-  startCheck();
-}
+        }
 
-function showError(error) {
-  switch(error.code) {
-    case error.PERMISSION_DENIED:
-    locationUnavailable();
-      break;
-    case error.POSITION_UNAVAILABLE:
-    locationUnavailable();
-      break;
-    case error.TIMEOUT:
-    locationUnavailable();
-      break;
-    case error.UNKNOWN_ERROR:
-    locationUnavailable();
-      break;
-  }
-}
+        function showError(error) {
+            switch (error.code) {
+                case error.PERMISSION_DENIED:
+                    var obj = document.getElementById("dvCurrencyChoice");
+                    obj.classList.remove("d-none");
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    var obj = document.getElementById("dvCurrencyChoice");
+                    obj.classList.remove("d-none");
+                    break;
+                case error.TIMEOUT:
+                    var obj = document.getElementById("dvCurrencyChoice");
+                    obj.classList.remove("d-none");
+                    break;
+                case error.UNKNOWN_ERROR:
+                    var obj = document.getElementById("dvCurrencyChoice");
+                    obj.classList.remove("d-none");
+                    break;
+            }
+            startCheck();
+        }
 
-//will determine if start button can be clicked and what errors are shown
-function startCheck(){
-  var currencyError=document.getElementById("currencyError");
-  var startButton=document.getElementById("startButton");
-  var nameError=document.getElementById("nameError");
-  var valid = true;
-if(localStorage.getItem("userName") && localStorage.getItem("userName") != ""){
-nameError.classList.add('d-none');
-}
-else{
-valid = false;
-nameError.classList.remove('d-none');
-}
-if(localStorage.getItem("currencySymbol") !== ""){
-currencyError.classList.add('d-none');
-}
-else{
-  valid = false;
-  currencyError.classList.remove('d-none');
-}
-if(valid){
-  startButton.disabled = false;
-}
-else{
-  startButton.disabled = true;
-}
-}
+        //will determine if start button can be clicked and what errors are shown
+          function startCheck(){
+            //var currencyError=document.getElementById("currencyError");
+            var startButton=document.getElementById("startButton");
+            var nameError=document.getElementById("nameError");
+            var valid = true;
+          if(localStorage.getItem("userName") && localStorage.getItem("userName") != ""){
+          nameError.classList.add('d-none');
+          }
+          else{
+          valid = false;
+          nameError.classList.remove('d-none');
+          }
+          /* if(localStorage.getItem("currencySymbol") !== ""){
+          currencyError.classList.add('d-none');
+          }
+          else{
+            valid = false;
+            currencyError.classList.remove('d-none');
+          } */
+          if(valid){
+            startButton.disabled = false;
+          }
+          else{
+            startButton.disabled = true;
+          }
+          }
 
-</script>
+          //on rdoButtonChange
+          function rdoChange(radio){
+          currencycode = radio.value;
+          startCheck();
+          }
+
+    </script>
 </head>
-<body onload="loadFunctions()">
-<div id="container">
-<div class="row">
-    <div class="col">
-        <h2>Blackjack!</h2>
+<body class="text-center" onload="loadFunctions()">
+    <div id="container">
+        <header class="masthead mb-auto">
+            <div>
+                <div class="col">
+                    <h1 class="cover-heading">Blackjack!</h1>
+                </div>
+            </div>
+        </header>
+        <div>
+          <label>Current UserName: </label> 
+          <label id="currentUserName"></label>
     </div>
-</div>
-<div>
-      <label>UserName: </label> 
-      <label id="currentUserName"></label>
-</div>
-<div class="row pt-3">
-    <div class="col">
-        <label for="txtUsername">Enter your desired user name:</label>
-        <input type="text" id="txtUsername" onkeyup="nameCheck()" />
-        <input type="button" id="nameSaveButton" value="Enter" onclick="SaveName()">
-    </div>
-</div>
-<div id="dvCurrencyChoice" class="row pt-3 d-none">
-    <div class="col">
-        <label for="rdoCurrency">Choose your Currency:</label>
-        <input type="radio" name="rdoCurrency" value="$" id="rdoUSD" onclick="rdoChange(this)"/> US Dollars ($)
-    </div>
-    <div class="col">
-        <input type="radio" name="rdoCurrency" value="€" id="rdoEuro" onclick="rdoChange(this)"/> Euro (&euro;)
-    </div>
-</div>
-<div class="row pt-3">
-    <div class="col">
-            <input type="button" id="startButton" value="Start Game" onclick="startGame()">
-    </div>
-</div>
-<div>
-  <p id="nameError"  style="color: red; margin-bottom: 0;">* Please enter a Name</p>
-</div>
-<div>
-  <p id="currencyError"  style="color: red; margin-bottom: 0;">* Please choose a Currency</p>
-</div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+        <div class="row pt-3">
+            <div class="col">
+                <label for="txtUsername">Desired Username: </label>
+                <input type="text" id="txtUsername" onkeyup="nameCheck()" />
+                <input type="button" class="btn btn-lg btn-secondary" id="nameSaveButton" value="Enter" onclick="SaveName()">
+            </div>
+        </div>
 
+        <div id="dvCurrencyChoice" class="row pt-3 d-none">
+            <div class="col">
+                <label for="rdoCurrency">Choose your Currency:</label>
+                <input type="radio" name="rdoCurrency" id="rdoUSD" onclick="rdoChange(this)" checked/> US Dollars ($)
+                <input type="radio" name="rdoCurrency" id="rdoEuro" onclick="rdoChange(this)"/> Euro (&euro;)
+            </div>
+        </div>
+
+        <div class="row pt-3">
+            <div class="col">
+                <input type="button" class="btn btn-lg btn-secondary" id="startButton" value="Start Game" onclick="startGame()">
+            </div>
+        </div>
+        <div>
+          <p id="nameError"  style="color: red; margin-bottom: 0;">* Please enter a Name</p>
+        </div>
+       <!--  <div>
+          <p id="currencyError"  style="color: red; margin-bottom: 0;">* Please choose a Currency</p>
+        </div> -->
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 
 </body>
 </html>
