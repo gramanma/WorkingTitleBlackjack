@@ -30,8 +30,8 @@ var game = new Phaser.Game(config);
       
         this.load.image('tabletop', 'assets/tabletop.png');
         this.load.image('cardback', 'assets/redback.png');
-        this.load.image('hitButton','assets/hitButton.PNG')
-        this.load.image('stayButton','assets/stayButton.PNG')
+        this.load.image('hitButton','assets/hit_button.png')
+        this.load.image('stayButton','assets/stay_button.png')
         freshDeck();
         deck.forEach(element => {
             this.load.image(element, 'assets/' + element + '.png');
