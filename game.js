@@ -9,11 +9,19 @@ var config = {
     }
 };
 
-let deck=[];
+let deck = [];
 
 //will grab currency specified from local storage
-let currency=localStorage.getItem("currencySymbol");
+let currency = localStorage.getItem("currencySymbol");
 
+//Bet amount for player
+let betAmount = 0;
+
+//Current amount of money for player.
+let cashAmount = 0;
+
+//Have the cards been dealt?
+let cardsDealt = false;
 
 var game = new Phaser.Game(config);
 
@@ -28,6 +36,9 @@ var game = new Phaser.Game(config);
         deck.forEach(element => {
             this.load.image(element, 'assets/' + element + '.png');
         });
+
+        //Give the player a starting cash amount;
+        cashAmount = 100;
        
       //  this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
     }
@@ -37,14 +48,18 @@ var game = new Phaser.Game(config);
         this.add.image(400, 300, 'tabletop');
         this.add.image(120, 150, 'cardback');
 
+        //TODO: Add buttons for raising and lowering the bet.
+
         var hitButton = this.add.image(650, 400, 'hitButton').setScale(.6);
         hitButton.setInteractive({useHandCursor: true});
         hitButton.on('pointerdown', () => hitClick());
+
+
         var stayButton = this.add.image(650, 480, 'stayButton').setScale(.6);
         stayButton.setInteractive({useHandCursor: true});
         stayButton.on('pointerdown', () => stayClick());
 
-        deck=shuffleDeck(deck);
+        deck = shuffleDeck(deck);
        
         // this.input.mouse.disableContextMenu();
 
@@ -99,12 +114,45 @@ var game = new Phaser.Game(config);
         return array;
     }
 
-        function hitClick(){
-            console.log('hit');
-        }
+    //Handles the 'hit' input on button click
+    function hitClick(){
+        console.log('hit');
+    }
     
-        function stayClick(){
-            console.log('stay');
-        }
+    //Handles the 'stay' input on button click
+    function stayClick(){
+        onsole.log('stay');
+    }
+
+    
+
+    //Increased the betAmount var by 10.
+    function increaseBet() {
+        if (!this.cardsDealt) {
+            if (betAmount >= cashAmount) {
+                console.log('Did not increase bet amount, player has insufficient funds.');
+            } else {
+                betAmount = betAmount + 10;
+                console.log('Current bet amount: (increased)' + betAmount);
+            }
+        } else {
+            console.log('Did not increase bet amount, cards already dealt.');
+        }       
+    }
+
+    //Decreases the betAmount var by 10.
+    function deceaseBet () {
+        if (!this.cardsDealt) {
+            if ((betAmount === 0)) {
+                console.log('Did not decrease bet amount, player cannot bet less than 0.');
+            } else {
+                betAmount = betAmount - 10;
+                console.log('Current bet amount: (decreased)' + betAmount);
+            }
+        } else {
+            console.log('Did not decrease bet amount, cards already dealt.');
+        } 
+    }
+
 
     

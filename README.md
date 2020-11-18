@@ -32,9 +32,10 @@ This repository is for the IT3049C final project.
 ### Mechanics
 - [ ] Handle user input via mouse click 
 - [ ] Add event listeners for clicks on button images 
-- [ ] Betting mechanism – increments of $10 up to current total 
-- [ ] Increase/decrease amount in $10 increments. Bet Amount shows between 2 outward facing triangles that increase/decrease amount 
-- [ ] Amount bet cannot be changed once cards are dealt 
+- [x] Betting mechanism – increments of $10 up to current total cash amount -Max
+- [x] Increase/decrease amount in $10 increments. -Max
+- [ ] Bet Amount shows between 2 outward facing triangles that increase/decrease amount 
+- [x] Amount bet cannot be changed once cards are dealt -Max
 - [ ] Remove cards from current deck array as they are dealt 
 - [x] Shuffling of card array - Tony 
 - [ ] Update number total as each card is received by player 
