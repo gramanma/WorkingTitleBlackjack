@@ -17,20 +17,23 @@ This repository is for the IT3049C final project.
 - [ ] Function to store/pull username, money, currency and possibly selected deck color 
 - [x] Images of cards- Tony 
 - [x] Images of cards- Tony Scale images to fit phaser frame - Tony 
+- [ ] Card flip animation
 
 ### Art Implementation
-- [ ] Background image for start page- Max 
-- [ ] Background image for game page - Max 
-- [ ] Styling of start page -Max 
-- [ ] "Hit" - create a button image -Max
-- [ ] "Stay" - create a button image -Max
-- [ ] Card dealing/flipping sound -Max
-- [ ] Card flip animation -Max
+
+- [x] Right and Left facing triangle to increase/decrease bet  -Max
+- [x] Background image for start page- Max 
+- [x] Background image for game page - Max 
+- [x] Styling of start page -Max 
+- [x] "Hit" - create a button image -Max
+- [x] "Stay" - create a button image -Max
+- [x] Card dealing/flipping sound -Max
 
 ### Mechanics
-- [x] Handle user input via mouse click 
+- [ ] Handle user input via mouse click 
+- [ ] Add event listeners for clicks on button images 
 - [ ] Betting mechanism – increments of $10 up to current total 
-- [ ] Increase/decrease about in $10 increments. Bet Amount shows between 2 outward facing triangles that increase/decrease amount 
+- [ ] Increase/decrease amount in $10 increments. Bet Amount shows between 2 outward facing triangles that increase/decrease amount 
 - [ ] Amount bet cannot be changed once cards are dealt 
 - [ ] Remove cards from current deck array as they are dealt 
 - [x] Shuffling of card array - Tony 
