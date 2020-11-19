@@ -39,7 +39,7 @@ var game = new Phaser.Game(config);
 
     function preload () {
 
-        deck = shuffleDeck(deck);
+        
         this.load.image('tabletop', 'assets/tabletop.png');
         this.load.image('cardback', 'assets/redback.png');
         this.load.image('hitButton','assets/hit_button.png');
@@ -48,6 +48,8 @@ var game = new Phaser.Game(config);
         deck.forEach(element => {
             this.load.image(element, 'assets/' + element + '.png');
         });
+
+        deck = shuffleDeck(deck);
      
 
         //Give the player a starting cash amount;
@@ -110,7 +112,7 @@ var game = new Phaser.Game(config);
     function freshDeck() {
         //setup deck array
         var suits = ["C", "D", "H", "S"];
-        var pips=["2" ,"3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
+        var pips = ["2" ,"3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"];
         for(x = 0; x < pips.length; x++){
             for(i = 0; i < suits.length; i++){
                 deck.push(pips[x] + suits[i]);
