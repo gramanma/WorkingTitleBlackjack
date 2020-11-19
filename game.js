@@ -23,6 +23,10 @@ let cashAmount = 0;
 //Have the cards been dealt?
 let cardsDealt = false;
 
+//so we can access buttons at a file level
+let stayButton;
+let hitButton;
+
 var game = new Phaser.Game(config);
 
     function preload ()
@@ -39,9 +43,11 @@ var game = new Phaser.Game(config);
 
         //Give the player a starting cash amount;
         cashAmount = 100;
-       
-      //  this.load.spritesheet('dude', 'assets/dude.png', { frameWidth: 32, frameHeight: 48 });
-    }
+
+        //temporary testing function  feel free to delete or remove
+       setTimeout(function(){simulateDealing();},4000);
+      }
+    
 
     function create ()
     {
@@ -50,14 +56,24 @@ var game = new Phaser.Game(config);
 
         //TODO: Add buttons for raising and lowering the bet.
 
-        var hitButton = this.add.image(650, 400, 'hitButton').setScale(.6);
-        hitButton.setInteractive({useHandCursor: true});
-        hitButton.on('pointerdown', () => hitClick());
+        hitButton = this.add.image(730, 450, 'hitButton').setScale(.6);
+        //will have to set Interactive after hand is dealt and the buttons should be enabled
+        hitButton.on('pointerdown', () => hitClick())
+        .on('pointerout', () => enterButtonRestState(hitButton))
+        .on('pointerover', () => enterButtonHoverState(hitButton))
+        .alpha = 0.2;
+        //properties will be changed after hand dealt
+        //will have to set back to these values when buttons are disabled
 
+        stayButton = this.add.image(730, 520, 'stayButton').setScale(.6);
+         //will have to set Interactive after hand is dealt and the buttons should be enabled
+        stayButton.on('pointerdown', () => stayClick())
+        .on('pointerout', () => enterButtonRestState(stayButton))
+        .on('pointerover', () => enterButtonHoverState(stayButton))
+        .alpha = 0.2;
+        //properties will be changed after hand dealt
+        //will have to set back to these values when buttons are disabled
 
-        var stayButton = this.add.image(650, 480, 'stayButton').setScale(.6);
-        stayButton.setInteractive({useHandCursor: true});
-        stayButton.on('pointerdown', () => stayClick());
 
         deck = shuffleDeck(deck);
        
@@ -81,7 +97,6 @@ var game = new Phaser.Game(config);
     function update ()
     {
         var pointer = this.input.activePointer;
-
     }
 
     function freshDeck(){
@@ -114,15 +129,34 @@ var game = new Phaser.Game(config);
         return array;
     }
 
+    //temporary testing function feel free to replace
+    function simulateDealing(){
+        console.log('Activating Buttons');
+        hitButton.setInteractive({useHandCursor: true});
+        hitButton.clearAlpha();
+        stayButton.setInteractive({useHandCursor: true});
+        stayButton.clearAlpha();
+    }
+
     //Handles the 'hit' input on button click
     function hitClick(){
-        console.log('hit');
+       //in progress
+        console.log(hitButton.height);
     }
     
     //Handles the 'stay' input on button click
     function stayClick(){
-        onsole.log('stay');
+        // in progress
+        console.log(stayButton.height);
     }
+
+    function enterButtonHoverState(button){
+        button.setScale(.8);
+    }
+
+    function enterButtonRestState(button){
+        button.setScale(.6);
+     }
 
     
 
@@ -153,6 +187,7 @@ var game = new Phaser.Game(config);
             console.log('Did not decrease bet amount, cards already dealt.');
         } 
     }
+
 
 
     
