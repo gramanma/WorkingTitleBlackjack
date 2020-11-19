@@ -98,7 +98,7 @@ var game = new Phaser.Game(config);
       
         return array;
     }
-
+    
         function hitClick(){
             console.log('hit');
         }
