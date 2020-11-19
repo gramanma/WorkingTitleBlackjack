@@ -36,12 +36,12 @@ This repository is for the IT3049C final project.
 - [x] Increase/decrease amount in $10 increments. -Max
 - [ ] Bet Amount shows between 2 outward facing triangles that increase/decrease amount 
 - [x] Amount bet cannot be changed once cards are dealt -Max
-- [ ] Remove cards from current deck array as they are dealt 
+- [x] Remove cards from current deck array as they are dealt -Max
 - [x] Shuffling of card array - Tony 
 - [ ] Update number total as each card is received by player 
 - [ ] Check if over 21 
 - [ ] Check if 5 cards without going over 21 
-- [ ] If user stays, determine if dealer will take extra cards or stay 
+- [x] If user stays, determine if dealer will take extra cards or stay -Max
 - [ ] Determine outcome of game 
 
 ---

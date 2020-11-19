@@ -23,19 +23,26 @@ let cashAmount = 0;
 //Have the cards been dealt?
 let cardsDealt = false;
 
+//Value of the cards that the dealer and user have + initialiazation.
+var userCardValue = 0;
+var dealerCardValue = 0;
+
+//Create empty arrays for the hands of the user and the dealer.
+let userHand = [];
+let dealerHnad = [];
+
 //so we can access buttons at a file level
 let stayButton;
 let hitButton;
 
 var game = new Phaser.Game(config);
 
-    function preload ()
-    {
+    function preload () {
       
         this.load.image('tabletop', 'assets/tabletop.png');
         this.load.image('cardback', 'assets/redback.png');
-        this.load.image('hitButton','assets/hit_button.png')
-        this.load.image('stayButton','assets/stay_button.png')
+        this.load.image('hitButton','assets/hit_button.png');
+        this.load.image('stayButton','assets/stay_button.png');
         freshDeck();
         deck.forEach(element => {
             this.load.image(element, 'assets/' + element + '.png');
@@ -49,8 +56,7 @@ var game = new Phaser.Game(config);
       }
     
 
-    function create ()
-    {
+    function create () {
         this.add.image(400, 300, 'tabletop');
         this.add.image(120, 150, 'cardback');
 
@@ -76,6 +82,7 @@ var game = new Phaser.Game(config);
 
 
         deck = shuffleDeck(deck);
+        deal(deck);
        
         // this.input.mouse.disableContextMenu();
 
@@ -94,23 +101,22 @@ var game = new Phaser.Game(config);
      //   this.add.image(140, 370, '2D');
     }
 
-    function update ()
-    {
+    function update () {
         var pointer = this.input.activePointer;
     }
 
-    function freshDeck(){
+    function freshDeck() {
         //setup deck array
-        var suits = ["C","D","H","S"];
-        var pips=["2","3","4","5","6","7","8","9","10","J","Q","K","A"];
-        for(x=0;x<pips.length;x++){
-            for(i=0;i < suits.length;i++){
+        var suits = ["C", "D", "H", "S"];
+        var pips=["2" ,"3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"];
+        for(x = 0; x < pips.length; x++){
+            for(i = 0; i < suits.length; i++){
                 deck.push(pips[x] + suits[i]);
             }
         }
     }
 
-    function shuffleDeck(array){
+    function shuffleDeck(array) {
         var currentIndex = array.length, temporaryValue, randomIndex;
 
         // While there remain elements to shuffle...
@@ -138,6 +144,34 @@ var game = new Phaser.Game(config);
         stayButton.clearAlpha();
     }
 
+    //Draw a card from the array and remove it after it is selected.
+    function draw(array) {
+        var selectedIndex = array.shift(); //Removed first element in array and selects it.
+        console.log(selectedIndex); //Log the drawn card.
+        return selectedIndex;
+    }
+
+    //Deal 2 cards from the deck to player and dealer.
+    function deal(array) {
+        
+        //Selects four cards the same way they would come off of a deck.
+        card1 = array.shift();
+        card2 = array.shift();
+        card3 = array.shift();
+        card4 = array.shift();
+
+        //Push alternating cards to the user hand;
+        userHand.push(card1);
+        userHand.push(card3);
+
+        //Push alternating cards to the dealer hand.
+        dealerHand.push(card2);
+        dealerHand.push(card4);
+
+        console.log("User hand:" + userHand);
+        console.log("Dealer hand: " + dealerHand);
+    }
+
     //Handles the 'hit' input on button click
     function hitClick(){
        //in progress
@@ -148,6 +182,14 @@ var game = new Phaser.Game(config);
     function stayClick(){
         // in progress
         console.log(stayButton.height);
+
+         //Determine if the dealer will take extra cards or stayt when the user clicks stay button.
+        if (dealerCardValue >= 16) {
+            //Make dealer hit.
+        } else {
+            draw(deck); //Make dealer draw.
+        }
+
     }
 
     function enterButtonHoverState(button){
@@ -157,8 +199,6 @@ var game = new Phaser.Game(config);
     function enterButtonRestState(button){
         button.setScale(.6);
      }
-
-    
 
     //Increased the betAmount var by 10.
     function increaseBet() {
