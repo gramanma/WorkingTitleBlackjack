@@ -29,7 +29,7 @@ var dealerCardValue = 0;
 
 //Create empty arrays for the hands of the user and the dealer.
 let userHand = [];
-let dealerHnad = [];
+let dealerHand = [];
 
 //so we can access buttons at a file level
 let stayButton;
