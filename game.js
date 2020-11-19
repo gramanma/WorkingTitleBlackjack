@@ -38,7 +38,8 @@ let hitButton;
 var game = new Phaser.Game(config);
 
     function preload () {
-      
+
+        deck = shuffleDeck(deck);
         this.load.image('tabletop', 'assets/tabletop.png');
         this.load.image('cardback', 'assets/redback.png');
         this.load.image('hitButton','assets/hit_button.png');
@@ -47,6 +48,7 @@ var game = new Phaser.Game(config);
         deck.forEach(element => {
             this.load.image(element, 'assets/' + element + '.png');
         });
+     
 
         //Give the player a starting cash amount;
         cashAmount = 100;
@@ -56,7 +58,7 @@ var game = new Phaser.Game(config);
       }
     
 
-    function create () {
+    function create() {
         this.add.image(400, 300, 'tabletop');
         this.add.image(120, 150, 'cardback');
 
@@ -81,8 +83,8 @@ var game = new Phaser.Game(config);
         //will have to set back to these values when buttons are disabled
 
 
-        deck = shuffleDeck(deck);
-        deal(deck);
+       
+       
        
         // this.input.mouse.disableContextMenu();
 
@@ -137,6 +139,7 @@ var game = new Phaser.Game(config);
 
     //temporary testing function feel free to replace
     function simulateDealing(){
+        deal(deck);
         console.log('Activating Buttons');
         hitButton.setInteractive({useHandCursor: true});
         hitButton.clearAlpha();
@@ -147,7 +150,7 @@ var game = new Phaser.Game(config);
     //Draw a card from the array and remove it after it is selected.
     function draw(array) {
         var selectedIndex = array.shift(); //Removed first element in array and selects it.
-        console.log(selectedIndex); //Log the drawn card.
+        console.log("Drawn Card: " + selectedIndex); //Log the drawn card.
         return selectedIndex;
     }
 
@@ -175,13 +178,13 @@ var game = new Phaser.Game(config);
     //Handles the 'hit' input on button click
     function hitClick(){
        //in progress
-        console.log(hitButton.height);
+        //console.log(hitButton.height);
     }
     
     //Handles the 'stay' input on button click
     function stayClick(){
         // in progress
-        console.log(stayButton.height);
+        //console.log(stayButton.height);
 
          //Determine if the dealer will take extra cards or stayt when the user clicks stay button.
         if (dealerCardValue >= 16) {
