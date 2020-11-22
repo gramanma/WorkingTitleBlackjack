@@ -14,6 +14,7 @@ function checkTotal(hand){
                 if(isFaceCard(element)){total+=10;}
                 if(isAce(element)){
                     total+= first_ace==true ? 1 : 11;
+                    if(first_ace==false){first_ace=true;}
                 }
             }else{
                 total+=parseInt(first_char);
@@ -21,7 +22,7 @@ function checkTotal(hand){
         });
         return total;
     }
-    
+
 function determineWinner(){
     //rules are applied top down
 
@@ -58,7 +59,7 @@ function hasAce(hand){
 }
 
 function isFaceCard(card){
-    return facecards.includes(card.element.substr(0,1)) ? true : false;
+    return facecards.includes(card.substr(0,1)) ? true : false;
 }
 function hasFaceCard(hand){
     hand.forEach(element => {
