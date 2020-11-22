@@ -9,27 +9,26 @@
         let currencycode = "$";
 
         function startGame() {
-
-            window.location.href = "game.html";
+          startCheck();
+          if(localStorage.getItem("userName")){
+          window.location.href="game.html";
+          }
+          var userName=document.getElementById("currentUserName");
+          userName.innerText = localStorage.getItem("userName");
         }
 
         function loadFunctions() {
             fetchCurrency();
             setName();
+            startCheck();
         }
 
         function setName() {
-            var nameInput = document.getElementById("txtUsername");
-            var nameButton = document.getElementById("nameSaveButton");
-            var startButton = document.getElementById("startButton");
-            if (localStorage.getItem("userName")) {
-                nameInput.value = localStorage.getItem("userName");
-                nameButton.disabled = false;
-                startButton.disabled = false;
-            } else {
-                nameButton.disabled = true;
-                startButton.disabled = true;
-            }
+          var nameInput=document.getElementById("txtUsername");
+          var nameButton=document.getElementById("nameSaveButton");
+          var userName=document.getElementById("currentUserName");
+          userName.innerText = localStorage.getItem("userName");
+          startCheck();
         }
 
         function nameCheck() {
@@ -44,15 +43,17 @@
         }
 
         function SaveName() {
-            var startButton = document.getElementById("startButton");
-            var nameInput = document.getElementById("txtUsername");
-            var nameButton = document.getElementById("nameSaveButton");
-            if (nameInput.value !== "") {
-                localStorage.setItem("userName", nameInput.value);
-                startButton.disabled = false;
-            } else {
-                nameButton.disabled = true;
-            }
+          var nameInput=document.getElementById("txtUsername");
+          var nameButton=document.getElementById("nameSaveButton");
+          userName=document.getElementById("currentUserName");
+          if(nameInput.value !== ""){
+          localStorage.setItem("userName",nameInput.value);
+          userName.innerText = localStorage.getItem("userName");
+          }
+          else{
+            nameButton.disabled = true;
+          }
+          startCheck();
         }
 
         async function fetchCurrency() {
@@ -100,7 +101,43 @@
                     obj.classList.remove("d-none");
                     break;
             }
+            startCheck();
         }
+
+        //will determine if start button can be clicked and what errors are shown
+          function startCheck(){
+            //var currencyError=document.getElementById("currencyError");
+            var startButton=document.getElementById("startButton");
+            var nameError=document.getElementById("nameError");
+            var valid = true;
+          if(localStorage.getItem("userName") && localStorage.getItem("userName") != ""){
+          nameError.classList.add('d-none');
+          }
+          else{
+          valid = false;
+          nameError.classList.remove('d-none');
+          }
+          /* if(currencycode){
+          currencyError.classList.add('d-none');
+          }
+          else{
+            valid = false;
+            currencyError.classList.remove('d-none');
+          } */
+          if(valid){
+            startButton.disabled = false;
+          }
+          else{
+            startButton.disabled = true;
+          }
+          }
+
+          //on rdoButtonChange
+          function rdoChange(radio){
+          currencycode = radio.value;
+          startCheck();
+          }
+      
     </script>
 </head>
 <body class="text-center" onload="loadFunctions()">
@@ -112,27 +149,38 @@
                 </div>
             </div>
         </header>
+        <div>
+          <label>Current UserName: </label> 
+          <label id="currentUserName"></label>
+    </div>
         <div class="row pt-3">
             <div class="col">
-                <label for="txtUsername">Username: </label>
+                <label for="txtUsername">Desired Username: </label>
                 <input type="text" id="txtUsername" onkeyup="nameCheck()" />
                 <input type="button" class="btn btn-lg btn-secondary" id="nameSaveButton" value="Enter" onclick="SaveName()">
             </div>
         </div>
-
         <div id="dvCurrencyChoice" class="row pt-3 d-none">
             <div class="col">
                 <label for="rdoCurrency">Choose your Currency:</label>
-                <input type="radio" name="rdoCurrency" id="rdoUSD" /> US Dollars ($)
-                <input type="radio" name="rdoCurrency" id="rdoEuro" /> Euro (&euro;)
+                <input type="radio" name="rdoCurrency" id="rdoUSD" onclick="rdoChange(this)" checked/> US Dollars ($)
+                <input type="radio" name="rdoCurrency" id="rdoEuro" onclick="rdoChange(this)"/> Euro (&euro;)
             </div>
         </div>
+
 
         <div class="row pt-3">
             <div class="col">
                 <input type="button" class="btn btn-lg btn-secondary" id="startButton" value="Start Game" onclick="startGame()">
             </div>
         </div>
+        <div>
+          <p id="nameError"  style="color: red; margin-bottom: 0;">* Please enter a Name</p>
+        </div>
+       <!--  <div>
+          <p id="currencyError"  style="color: red; margin-bottom: 0;">* Please choose a Currency</p>
+        </div> -->
+
 
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
