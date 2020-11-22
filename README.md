@@ -40,9 +40,8 @@ This repository is for the IT3049C final project.
 - [x] Shuffling of card array - Tony 
 - [ ] Update number total as each card is received by player 
 - [x] Check score total - Tony 
-- [ ] Check if 5 cards without going over 21 
 - [x] If user stays, determine if dealer will take extra cards or stay -Max
-- [x] Determine outcome of game 
+- [x] Determine outcome of game - Tony
 
 ---
 
