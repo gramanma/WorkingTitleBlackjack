@@ -4,7 +4,14 @@ let player_hand=["2D","7C","TS"];
 let dealer_hand=["KS","8H"];
 let facecards = ["T","K","Q","J"];
 
-function checkTotal(hand){
+/*
+checkTotal(array,'' or 1)
+    if checkTotal result is > 21, call checkTotal a second time 
+    and pass in 1 for ace_value to see if counting aces as 1 still
+    results in a value over 21
+*/
+
+function checkTotal(hand,ace_value){
     let total=0;
     hand = hand.sort();
     let first_ace = false;
@@ -13,8 +20,12 @@ function checkTotal(hand){
             if(isNaN(first_char)){
                 if(isFaceCard(element)){total+=10;}
                 if(isAce(element)){
-                    total+= first_ace==true ? 1 : 11;
-                    if(first_ace==false){first_ace=true;}
+                    if(!isNaN(ace_value)){
+                        total += parseInt(ace_value);
+                    }else{
+                        total += first_ace==true ? 1 : 11;
+                        if(first_ace==false){first_ace=true;}
+                    }
                 }
             }else{
                 total+=parseInt(first_char);
