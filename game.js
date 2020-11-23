@@ -29,13 +29,18 @@ let cardsDealt = false;
 var userCardValue = 0;
 var dealerCardValue = 0;
 
+
 //Create empty arrays for the hands of the user and the dealer.
 let userHand = [];
 let dealerHand = [];
 
+
 //so we can access buttons at a file level
 let stayButton;
 let hitButton;
+
+//
+let roundResultText;
 
 var game = new Phaser.Game(config);
 
@@ -66,6 +71,8 @@ var game = new Phaser.Game(config);
         this.add.image(400, 300, 'tabletop');
         this.add.image(120, 150, 'cardback');
 
+         roundResultText = this.add.text(config.width / 2, config.height / 2, "gameOVer", { fontSize: '20px', fill: '#fff' });
+         roundResultText.visible = false;
         //TODO: Add buttons for raising and lowering the bet.
 
         hitButton = this.add.image(730, 450, 'hitButton').setScale(.6);
@@ -73,7 +80,7 @@ var game = new Phaser.Game(config);
         hitButton.on('pointerdown', () => hitClick())
         .on('pointerout', () => enterButtonRestState(hitButton))
         .on('pointerover', () => enterButtonHoverState(hitButton))
-        .alpha = 0.2;
+        .alpha = .2;
         //properties will be changed after hand dealt
         //will have to set back to these values when buttons are disabled
 
@@ -82,9 +89,10 @@ var game = new Phaser.Game(config);
         stayButton.on('pointerdown', () => stayClick())
         .on('pointerout', () => enterButtonRestState(stayButton))
         .on('pointerover', () => enterButtonHoverState(stayButton))
-        .alpha = 0.2;
+        .alpha = .2;
         //properties will be changed after hand dealt
         //will have to set back to these values when buttons are disabled
+
 
 
        
@@ -105,10 +113,13 @@ var game = new Phaser.Game(config);
       //  });
     //    this.add.image(140, 170, '2C');
      //   this.add.image(140, 370, '2D');
+
     }
 
     function update () {
         var pointer = this.input.activePointer;
+        //userCardValue = getHandTotal(userHand);
+        //dealerCardValue = getHandTotal(dealerHand);
     }
 
     function freshDeck() {
@@ -145,10 +156,21 @@ var game = new Phaser.Game(config);
     function simulateDealing(){
         deal(deck);
         console.log('Activating Buttons');
-        hitButton.setInteractive({useHandCursor: true});
-        hitButton.clearAlpha();
-        stayButton.setInteractive({useHandCursor: true});
-        stayButton.clearAlpha();
+        userCardValue = getHandTotal(userHand);
+        console.log('User hand value = ' + userCardValue);
+        dealerCardValue = getHandTotal(dealerHand);
+        console.log('Dealer hand value = ' + dealerCardValue);
+        if(hasBlackJack(userHand) && hasBlackJack(dealerHand)){
+            game.pause();
+            console.log("I believe this is a tie");
+        };
+        if(hasBlackJack(userHand) && !hasBlackJack(dealerHand)){
+            userWins("User had BlackJack!");
+        };
+        if(!hasBlackJack(userHand) && hasBlackJack(dealerHand)){
+            dealerWins("Dealer had BlackJack!");
+        };
+        enableButtons();
     }
 
     //Draw a card from the array and remove it after it is selected.
@@ -182,21 +204,58 @@ var game = new Phaser.Game(config);
     //Handles the 'hit' input on button click
     function hitClick(){
        //in progress
-        //console.log(hitButton.height);
+       userHand.push(draw(deck));
+       buttonsDisabled();
+       setTimeout(function(){ 
+        console.log('allowing card animation time');
+           enableButtons(); 
+       userCardValue = getHandTotal(userHand);
+       console.log('New User CardTotal = '+ userCardValue);
+       if(userCardValue > 21){
+        dealerWins('bust');
+       }
+       if(userCardValue === 21){
+           stayClick();
+           buttonsDisabled();
+       }
+        },2000);
     }
     
     //Handles the 'stay' input on button click
     function stayClick(){
+        buttonsDisabled();
+         setTimeout(function(){
+             console.log('allowing card animation time');
         // in progress
-        //console.log(stayButton.height);
 
-         //Determine if the dealer will take extra cards or stayt when the user clicks stay button.
+        //dealerFlips his turned card if it is turned
+
+         //Determine if the dealer will take extra cards or stay when the user clicks stay button.
         if (dealerCardValue >= 16) {
-            //Make dealer hit.
+            dealerCardValue = getHandTotal(dealerHand);
+            //logic for dealers decision
+            if(dealerShouldDraw(dealerHand)){
+            console.log('dealer drawing');
+            dealerHand.push(draw(deck));
+            }
+            else{
+                console.log('dealer staying');
+                determineWinnerNoBust();
+            }
         } else {
-            draw(deck); //Make dealer draw.
+            dealerHand.push(draw(deck)); //Make dealer draw.
+            console.log('dealer drawing');
         }
-
+        dealerCardValue = getHandTotal(dealerHand);
+        console.log('dealer CardTotal = '+ dealerCardValue);
+        if(dealerCardValue > 21){
+            userWins("dealer busted");
+        }
+        else{
+            //will call this function over and over again until dealer busts or decides to not take a card
+            stayClick();
+        }
+        },2000);
     }
 
     function enterButtonHoverState(button){
@@ -206,6 +265,23 @@ var game = new Phaser.Game(config);
     function enterButtonRestState(button){
         button.setScale(.6);
      }
+    
+     function enableButtons(){
+        hitButton.setInteractive({useHandCursor: true});
+        stayButton.setInteractive({useHandCursor: true});
+        hitButton.clearAlpha();
+        stayButton.clearAlpha();
+     }
+
+     //disables buttons
+     function buttonsDisabled(){
+         console.log('disableingButtons');
+         hitButton.alpha = 0.2;
+         stayButton.alpha = 0.2;
+         hitButton.removeInteractive();
+         stayButton.removeInteractive();
+     }
+     
 
     //Increased the betAmount var by 10.
     function increaseBet() {
@@ -233,6 +309,96 @@ var game = new Phaser.Game(config);
         } else {
             console.log('Did not decrease bet amount, cards already dealt.');
         } 
+    }
+
+    function getHandTotal(hand){
+        var acesInHand = 0;
+        var numberCard = /^[0-9]/;
+        var total = 0;
+        var c;
+        for(c of hand){
+            //if its an ace
+            if(c[0] === "A"){
+                acesInHand++;
+            }
+            //if its a number card
+            else if(c[0].match(numberCard)){   
+                total += parseInt(c[0], 10);
+            }
+            //if it is a face card that isnt an ace (or if it is a 10 aka "T")
+            else{
+                total += 10;
+            }
+        }
+        if(acesInHand != 0){
+        //aces logic here,  for now returning all aces as 1
+        total += acesInHand;
+        }
+        return total;
+    }
+    
+    //will hold the logic and answer for determining if the dealer will take another card or not
+    function dealerShouldDraw(){
+        //returning false for now
+        return false;
+    }
+
+    //determineWinnerNoButs
+    function determineWinnerNoBust(){
+        userCardValue = getHandTotal(userHand);
+        console.log('New User CardTotal = '+ userCardValue);
+        dealerCardValue = getHandTotal(dealerHand);
+        if (userCardValue === dealerCardValue){
+            dealerWins('Dealer wins on a tie');
+        }
+        else if(userCardValue > dealerCardValue){
+            userWins('User had a higher total than dealer');
+        }
+        else{
+            dealerWins('Dealer had a higher total than user');
+        }
+    }
+
+    //will immediately decide a winner if the user has a black jack
+    function hasBlackJack(hand){
+        var temporaryArray = [];
+        var c;
+        for(c of hand){
+            temporaryArray.push(c[0]);
+        }
+        //checks to see if the two card hand has an ace and 10 value card
+        if(temporaryArray.includes("A") 
+        && (temporaryArray.includes("T") 
+        || temporaryArray.includes("K") 
+        || temporaryArray.includes("Q") 
+        || temporaryArray.includes("T"))){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    //will stop the round or game and notify the user that they have one
+    function userWins(reason = "") {
+        buttonsDisabled();
+    // Display round result at center of the screen 
+    roundResultText.text = reason;
+    roundResultText.visible = true;
+    roundResultText.setDepth(1);
+    game.scene.pause("default"); 
+    console.log("user has won the round: " + reason);
+    }
+
+    function dealerWins(reason = ""){
+        buttonsDisabled();
+        // Display round result at center of the screen 
+        roundResultText.text = reason;
+        roundResultText.visible = true;
+        roundResultText.setDepth(1);
+        game.scene.pause("default");
+      
+        console.log("dealer has won the round: " + reason);
     }
 
 
