@@ -1,7 +1,6 @@
 let player_score = 0;  
 let dealer_score = 0;
-let player_hand=["2D","7C","TS"];
-let dealer_hand=["KS","8H"];
+
 let facecards = ["T","K","Q","J"];
 
 /*

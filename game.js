@@ -156,9 +156,9 @@ var game = new Phaser.Game(config);
     function simulateDealing(){
         deal(deck);
         console.log('Activating Buttons');
-        userCardValue = getHandTotal(userHand);
+        userCardValue = checkTotal(userHand);
         console.log('User hand value = ' + userCardValue);
-        dealerCardValue = getHandTotal(dealerHand);
+        dealerCardValue = checkTotal(dealerHand);
         console.log('Dealer hand value = ' + dealerCardValue);
         if(hasBlackJack(userHand) && hasBlackJack(dealerHand)){
             game.pause();
@@ -209,7 +209,7 @@ var game = new Phaser.Game(config);
        setTimeout(function(){ 
         console.log('allowing card animation time');
            enableButtons(); 
-       userCardValue = getHandTotal(userHand);
+       userCardValue = checkTotal(userHand);
        console.log('New User CardTotal = '+ userCardValue);
        if(userCardValue > 21){
         dealerWins('bust');
@@ -232,7 +232,7 @@ var game = new Phaser.Game(config);
 
          //Determine if the dealer will take extra cards or stay when the user clicks stay button.
         if (dealerCardValue >= 16) {
-            dealerCardValue = getHandTotal(dealerHand);
+            dealerCardValue = checkTotal(dealerHand);
             //logic for dealers decision
             if(dealerShouldDraw(dealerHand)){
             console.log('dealer drawing');
@@ -246,7 +246,7 @@ var game = new Phaser.Game(config);
             dealerHand.push(draw(deck)); //Make dealer draw.
             console.log('dealer drawing');
         }
-        dealerCardValue = getHandTotal(dealerHand);
+        dealerCardValue = checkTotal(dealerHand);
         console.log('dealer CardTotal = '+ dealerCardValue);
         if(dealerCardValue > 21){
             userWins("dealer busted");
@@ -340,7 +340,15 @@ var game = new Phaser.Game(config);
     //will hold the logic and answer for determining if the dealer will take another card or not
     function dealerShouldDraw(){
         //returning false for now
-        return false;
+        //dealer wins all ties
+        if(parseInt(userCardValue)<=parseInt(dealerCardValue)){
+            return false;
+        }
+        //dealer has to stay on a 16 or better
+        if(parseInt(userCardValue) > parseInt(dealerCardValue) && parseInt(dealerCardValue) < 16){
+            return false;
+        }
+        return true;
     }
 
     //determineWinnerNoButs
