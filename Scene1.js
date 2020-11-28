@@ -200,7 +200,7 @@ class Scene1 extends Phaser.Scene{
         console.log("dealer decision");
         console.log(checkTotal(dealerHand));
         console.log(checkTotal(dealerHand,1));
-        for(x=1; x< 10; x++){
+      //  for(x=1; x< 10; x++){
             if(checkTotal(dealerHand) > 21){
                 if(checkTotal(dealerHand,1) > 21){
                     roundResultText.text="Dealer busts. \nPlayer Wins!";
@@ -229,7 +229,7 @@ class Scene1 extends Phaser.Scene{
             }
            
            
-        }
+       // }
     }
 
     //Handles the 'stay' input on button click
