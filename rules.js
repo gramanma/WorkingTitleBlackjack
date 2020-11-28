@@ -22,6 +22,7 @@ function checkTotal(hand,ace_value){
                     if(!isNaN(ace_value)){
                         total += parseInt(ace_value);
                     }else{
+
                         total += first_ace==true ? 1 : 11;
                         if(first_ace==false){first_ace=true;}
                     }
@@ -38,13 +39,13 @@ function determineWinner(){
 
     //dealer has blackjack-dealer wins
     if(dealerHand.length===2 && hasFaceCard(dealerHand) && hasAce(dealerHand)){
-        return "Dealer Wins";
+        return "Dealer has Blackjack! \nDealer Wins!";
     }
     player_score=checkTotal(userHand);
    
     //player has five cards without passing 21 - player wins
     if(userHand.length==5){
-        return "Player Wins";
+        return "Five card Charlie! \nPlayer Wins!";
     }
 
     dealer_score = checkTotal(dealerHand);
@@ -54,8 +55,8 @@ function determineWinner(){
     }
 
      //player greater than dealer - player wins
-     if(parseInt(player_score) > parseInt(dealer_score)){
-        return "Player Wins";
+     if(parseInt(player_score) < 22 && parseInt(player_score) > parseInt(dealer_score)){
+        return "Player Wins!";
     }
 }
 function isAce(card){
@@ -76,7 +77,7 @@ function hasFaceCard(hand){
         if(isFaceCard(element)){return true;}
      });
      return false;   
-};
+}
 
 
     

@@ -53,6 +53,7 @@ function freshDeck() {
         }
     }
 }
+
 function shuffleDeck(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
 
@@ -85,6 +86,8 @@ function  enterButtonHoverState(button){
     console.log("Drawn Card: " + selectedIndex); //Log the drawn card.
     return selectedIndex;
 }
+
+
 
 
 

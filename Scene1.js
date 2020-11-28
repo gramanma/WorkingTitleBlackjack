@@ -16,7 +16,7 @@ class Scene1 extends Phaser.Scene{
             deck.forEach(element => {
                 this.load.image(element, 'assets/' + element + '.png');
             });
-    
+              
             deck = shuffleDeck(deck);
              
             //Give the player a starting cash amount;
@@ -29,17 +29,17 @@ class Scene1 extends Phaser.Scene{
 
         //cardslots
         for(i=0; i < 12; i++){
-            userCardSlots[i] =  this.add.sprite(250 + i*25,450, "backflip")
-            dealerCardSlots[i] = this.add.sprite(250 + i*25,250, "backflip")
+            userCardSlots[i] =  this.add.sprite(250 + i*25,450, "backflip");
+            dealerCardSlots[i] = this.add.sprite(250 + i*25,250, "backflip");
         }
            
         for(i=0; i< 12 ; i++){
-            userCardSlots[i].visible=false
-            dealerCardSlots[i].visible=false
+            userCardSlots[i].visible=false;
+            dealerCardSlots[i].visible=false;
         }
       
-         roundResultText = this.add.text(config.width / 2, config.height / 2, "gameOVer", { fontSize: '20px', fill: '#fff' });
-         roundResultText.visible = false;
+         roundResultText = this.add.text(540, 100, "", { fontSize: '20px', fill: '#fff' });
+     
         //TODO: Add buttons for raising and lowering the bet.
 
         dealButton = this.add.image(710, 350, 'dealButton').setScale(.6);
@@ -77,52 +77,51 @@ class Scene1 extends Phaser.Scene{
 
     }
 
-    flip(card,face){
+   flip(card,face){
         try{
-        console.log(card);
-        console.log(face);
-        const timeline = this.tweens.timeline(
-            {
-                onComplete: () => {
-                    timeline.destroy()
+            console.log(card);
+            console.log(face);
+            const timeline = this.tweens.timeline(
+                {
+                    onComplete: () => {
+                        timeline.destroy();
+                    }
                 }
-            }
-        );
-
-        timeline.add({
-            targets: card,
-            scale:1.1,
-            duration: 300
-        })
-        timeline.add({
-            targets:card,
-            scaleX:0,
-            duration: 300,
-            delay:200,
-            onComplete: () => {
-                card.setTexture(face)
-            }
-        })
-        timeline.add({
-            targets: card,
-            scaleX:1.1,
-            duration: 300
-        })
-        timeline.add({
-            targets: card,
-            scale:1,
-            duration: 300
-        })
-
-        timeline.play()
-    }catch(err){
-        console.log(err.message);
-    }
+            );
+    
+            timeline.add({
+                targets: card,
+                scale:1.1,
+                duration: 300
+            });
+            timeline.add({
+                targets:card,
+                scaleX:0,
+                duration: 300,
+                delay:200,
+                onComplete: () => {
+                    card.setTexture(face);
+                }
+            });
+            timeline.add({
+                targets: card,
+                scaleX:1.1,
+                duration: 300
+            });
+            timeline.add({
+                targets: card,
+                scale:1,
+                duration: 300
+            });
+    
+            timeline.play();
+        }catch(err){
+            console.log(err.message);
+        }
     }
     
-    
-
      deal(array) {
+        roundResultText.text="";
         userHand = [];
         dealerHand = [];
         
@@ -145,9 +144,9 @@ class Scene1 extends Phaser.Scene{
         dealerCardSlots[0].visible=true;
         dealerCardSlots[1].visible=true;
 
-        this.flip(userCardSlots[0],usercard1);
-        this.flip(userCardSlots[1],usercard2);
-        this.flip(dealerCardSlots[0],dealercard1);
+       this.flip(userCardSlots[0],usercard1);
+       this.flip(userCardSlots[1],usercard2);
+       this.flip(dealerCardSlots[0],dealercard1);
    
         //Push alternating cards to the user hand;
         userHand.push(usercard1);
@@ -177,14 +176,17 @@ class Scene1 extends Phaser.Scene{
        userHand.push(draw(deck));
        console.table(userHand);
        userCardSlots[userHand.length-1].visible=true;
-       this.flip(userCardSlots[userHand.length-1],userHand[userHand.length-1])
+       this.flip(userCardSlots[userHand.length-1],userHand[userHand.length-1]);
  
        userCardValue = checkTotal(userHand);
        console.log('New User CardTotal = '+ userCardValue);
        if(checkTotal(userHand) > 21){
+           //check a second time counting aces as 1's
+           if(checkTotal(userHand,1) > 21){
             this.buttonsDisabled();
-            setTimeout(this.stayClick(),5000);
-           
+            roundResultText.text= checkTotal(userHand,1) + "\nPlayer busts.\nDealer Wins!";
+                       
+           }
        }
        if(checkTotal(userHand) === 21){
         this.buttonsDisabled();
@@ -199,67 +201,59 @@ class Scene1 extends Phaser.Scene{
       this.deal(deck);
      }
     
-     
-
-    //Handles the 'stay' input on button click
-     stayClick(){
-        this.buttonsDisabled();
-      //  console.log(dealerCardSlots[1]);
-       
-        console.log("stay click");
-        console.table(dealerHand);
-        dealerCardSlots[dealerHand.length - 1].visible=true;
-        this.flip(dealerCardSlots[1],dealerHand[1]);
-        console.log("after flip");
-        setTimeout(this.dealerdecision,5000);
-        // if (checkTotal(dealerHand) < 16) {
-        //     // setTimeout(this.dealerhit, 1000)
-        //     // let flag=false;
-        //     // //need to loop dealer drawing cards until over 16 or bust
-        //     // do {
-        //     //     //draw a card
-              
-        //     //     if(checkTotal(dealerHand) >= 16){
-        //     //         //dealer stays
-        //     //         flag=true;
-        //     //     }             
-        //     //   }
-        //     //   while (flag==false);
-        // }else{
-        //     console.log("dealer stays");
-        // }
-        
-   
-    }
-    
-    dealerDraw(){
+     dealerDraw(){
         dealerHand.push(draw(deck));
         dealerCardSlots[dealerHand.length-1].visible=true;
         console.log("here");
-        flip(dealerCardSlots[dealerHand.length-1],dealerHand[dealerHand.length-1])
+       this.flip(dealerCardSlots[dealerHand.length-1],dealerHand[dealerHand.length-1]);
     }
 
     dealerdecision(){
         console.log("dealer decision");
-       if (checkTotal(dealerHand) >= 16) {
-           //dealer stays
-           console.log(determineWinner());
-           return;
-       }
-           //inform the user of the dealers score and if they will take a card or not
-           //have to add a delay to slow down the process for the user
-           this.dealerDraw()
-          
-           //  console.log(determineWinner());
-      
+        for(x=1; x< 10; x++){
+            if(checkTotal(dealerHand) > 21){
+                if(checkTotal(dealerHand,1) > 21){
+                    roundResultText.text="Dealer busts. \nPlayer Wins!";
+                    this.buttonsDisabled();
+                    return;
+                }
+            }
+            if (checkTotal(dealerHand) >= 16) {
+                //dealer stays
+                roundResultText.text=determineWinner();
+                this.buttonsDisabled();
+                return;
+            }
+            if (checkTotal(dealerHand) < 16 && checkTotal(userHand) < 22) {
+                dealerHand.push(draw(deck));
+                dealerCardSlots[dealerHand.length-1].visible=true;
+                console.log(checkTotal(dealerHand));
+            
+                this.flip(dealerCardSlots[dealerHand.length-1],dealerHand[dealerHand.length-1]);
+        
+             }
+        }
     }
 
+    //Handles the 'stay' input on button click
+     stayClick(){
+        this.buttonsDisabled();
+       
+        console.table(dealerHand);
+        dealerCardSlots[dealerHand.length - 1].visible=true;
+        this.flip(dealerCardSlots[1],dealerHand[1]);
+
+        this.time.addEvent({
+            delay: 1000,
+            callback: this.dealerdecision,
+            callbackScope: this,
+            loop: false
+          });
+
+    }
     
-
-
-       //disables buttons
+    //disables buttons
       buttonsDisabled(){
-    //     console.log('disablingButtons');
          hitButton.alpha = 0.3;
          stayButton.alpha = 0.3;
          hitButton.removeInteractive();
@@ -294,27 +288,4 @@ class Scene1 extends Phaser.Scene{
             console.log('Did not decrease bet amount, cards already dealt.');
         } 
     }
-
-    //will stop the round or game and notify the user that they have one
-     userWins(reason = "") {
-        this.buttonsDisabled()
-    // Display round result at center of the screen 
-    roundResultText.text = reason;
-    roundResultText.visible = true;
-    roundResultText.setDepth(1);
-    game.scene.pause("default"); 
-    console.log("user has won the round: " + reason);
-    }
-
-     dealerWins(reason = ""){
-        this.buttonsDisabled()
-        // Display round result at center of the screen 
-        roundResultText.text = reason;
-        roundResultText.visible = true;
-        roundResultText.setDepth(1);
-        game.scene.pause("default");
-      
-        console.log("dealer has won the round: " + reason);
-    }
-    
 }
