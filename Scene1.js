@@ -188,11 +188,6 @@ class Scene1 extends Phaser.Scene{
                        
            }
        }
-       if(checkTotal(userHand) === 21){
-        this.buttonsDisabled();
-        setTimeout(this.stayClick(),2000);
-       }
-     
     }
 
      dealClick(){
@@ -200,38 +195,40 @@ class Scene1 extends Phaser.Scene{
 
       this.deal(deck);
      }
-    
-     dealerDraw(){
-        dealerHand.push(draw(deck));
-        dealerCardSlots[dealerHand.length-1].visible=true;
-        console.log("here");
-       this.flip(dealerCardSlots[dealerHand.length-1],dealerHand[dealerHand.length-1]);
-    }
-
+      
     dealerdecision(){
         console.log("dealer decision");
+        console.log(checkTotal(dealerHand));
+        console.log(checkTotal(dealerHand,1));
         for(x=1; x< 10; x++){
             if(checkTotal(dealerHand) > 21){
                 if(checkTotal(dealerHand,1) > 21){
                     roundResultText.text="Dealer busts. \nPlayer Wins!";
-                    this.buttonsDisabled();
                     return;
                 }
+            }else{
+                if (checkTotal(dealerHand) >= 16) {
+                    //dealer stays
+                    roundResultText.text=determineWinner();
+                    return;
+                }else{
+                   // if (checkTotal(dealerHand) < 16 && checkTotal(userHand) < 22) {
+                        dealerHand.push(draw(deck));
+                        dealerCardSlots[dealerHand.length-1].visible=true;
+                        console.log(checkTotal(dealerHand));
+                    
+                        this.flip(dealerCardSlots[dealerHand.length-1],dealerHand[dealerHand.length-1]);
+                        this.time.addEvent({
+                            delay: 1000,
+                            callback: this.dealerdecision,
+                            callbackScope: this,
+                            loop: false
+                          });
+                    // }
+                }
             }
-            if (checkTotal(dealerHand) >= 16) {
-                //dealer stays
-                roundResultText.text=determineWinner();
-                this.buttonsDisabled();
-                return;
-            }
-            if (checkTotal(dealerHand) < 16 && checkTotal(userHand) < 22) {
-                dealerHand.push(draw(deck));
-                dealerCardSlots[dealerHand.length-1].visible=true;
-                console.log(checkTotal(dealerHand));
-            
-                this.flip(dealerCardSlots[dealerHand.length-1],dealerHand[dealerHand.length-1]);
-        
-             }
+           
+           
         }
     }
 

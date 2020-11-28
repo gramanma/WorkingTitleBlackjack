@@ -20,6 +20,7 @@ function checkTotal(hand,ace_value){
                 if(isFaceCard(element)){total+=10;}
                 if(isAce(element)){
                     if(!isNaN(ace_value)){
+                        console.log("counts aces as 1");
                         total += parseInt(ace_value);
                     }else{
 
@@ -38,7 +39,7 @@ function determineWinner(){
     //rules are applied top down
 
     //dealer has blackjack-dealer wins
-    if(dealerHand.length===2 && hasFaceCard(dealerHand) && hasAce(dealerHand)){
+    if(dealerHand.length==2 && hasFaceCard(dealerHand) && hasAce(dealerHand)){
         return "Dealer has Blackjack! \nDealer Wins!";
     }
     player_score=checkTotal(userHand);
@@ -51,7 +52,7 @@ function determineWinner(){
     dealer_score = checkTotal(dealerHand);
     //player and dealer have same total - dealer wins all ties
     if(parseInt(dealer_score) >= parseInt(player_score)){
-        return "Dealer Wins";
+        return "Dealer Wins!";
     }
 
      //player greater than dealer - player wins
