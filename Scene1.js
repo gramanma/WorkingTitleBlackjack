@@ -3,24 +3,8 @@ class Scene1 extends Phaser.Scene{
         super("playGame");
     }
 
-    preload(){
-               
-            this.load.image('tabletop', 'assets/Gametable.png');
-            this.load.image('cardback', 'assets/cardback3.png');
-            this.load.image('hitButton','assets/hit_button.png');
-            this.load.image('stayButton','assets/stay_button.png');
-            this.load.image('backflip', 'assets/cardback3.png');
-            this.load.image('dealButton','assets/hit_button.png');
-              
-            freshDeck();
-            deck.forEach(element => {
-                this.load.image(element, 'assets/' + element + '.png');
-            });
-              
-            deck = shuffleDeck(deck);
-             
-            //Give the player a starting cash amount;
-            cashAmount = 100;
+    preload() { 
+        this.loadBlackjack(100);  
     }
 
     create(){
@@ -33,9 +17,9 @@ class Scene1 extends Phaser.Scene{
             dealerCardSlots[i] = this.add.sprite(250 + i*25,250, "backflip");
         }
            
-        for(i=0; i< 12 ; i++){
-            userCardSlots[i].visible=false;
-            dealerCardSlots[i].visible=false;
+        for(i = 0; i < 12 ; i++){
+            userCardSlots[i].visible = false;
+            dealerCardSlots[i].visible = false;
         }
       
          roundResultText = this.add.text(540, 100, "", { fontSize: '20px', fill: '#fff' });
@@ -64,6 +48,7 @@ class Scene1 extends Phaser.Scene{
         .on('pointerout', () => enterButtonRestState(stayButton))
         .on('pointerover', () => enterButtonHoverState(stayButton))
         .alpha = .2;
+        
         //properties will be changed after hand dealt
         //will have to set back to these values when buttons are disabled
         this.add.text(350,100, "Dealer", { font: "32px Arial", fill: "#ffffff", align: "center" });
@@ -77,8 +62,34 @@ class Scene1 extends Phaser.Scene{
 
     }
 
-   flip(card,face){
-        try{
+    /**
+     * @author mgraman (gramanma@mail.uc.edu).
+     * @summary Loads all image assets, creates a fresh deck, and gives the player starting cash.
+     * @argument startingCash the amount of cash you want the user to start with.
+     */
+    loadBlackjack(startingCash) {
+        //Load images.
+        this.load.image('tabletop', 'assets/Gametable.png');
+        this.load.image('cardback', 'assets/cardback3.png');
+        this.load.image('hitButton','assets/hit_button.png');
+        this.load.image('stayButton','assets/stay_button.png');
+        this.load.image('dealButton','assets/deal_button.png');
+        this.load.image('backflip', 'assets/cardback3.png');
+        this.load.image('dealButton','assets/hit_button.png');
+        
+        //Create fresh deck and deal it.
+        freshDeck();
+        deck.forEach(element => {
+            this.load.image(element, 'assets/' + element + '.png');
+        });
+        deck = shuffleDeck(deck);   
+
+        //Starting cash amount.
+        cashAmount = startingCash;
+    }
+
+    flip(card, face) {
+        try {
             console.log(card);
             console.log(face);
             const timeline = this.tweens.timeline(
@@ -120,33 +131,38 @@ class Scene1 extends Phaser.Scene{
         }
     }
     
-     deal(array) {
+    /**
+     * @author mgraman (mgraman@mail.uc.edu)
+     * @param {*} array array which contains the deck of cards to be shuffled.
+     * @summary this method emptys the user and dealer hand, sets textures for cards, and manages the hands for the dealer and user.
+     */
+    deal(array) {
+
         roundResultText.text="";
         userHand = [];
         dealerHand = [];
         
-        for(i=0; i < 12 ; i++){
+        for(i = 0; i < 12 ; i++){
             userCardSlots[i].setTexture('backflip');
             dealerCardSlots[i].setTexture('backflip');
-            userCardSlots[i].visible=false;
-            dealerCardSlots[i].visible=false;
+            userCardSlots[i].visible = false;
+            dealerCardSlots[i].visible = false;
         }
     
         //Selects four cards the same way they would come off of a deck.
         let usercard1 = array.shift();
         let usercard2 = array.shift();
-      
         let dealercard1 = array.shift();
         let dealercard2 = array.shift();
     
-        userCardSlots[0].visible=true;
-        userCardSlots[1].visible=true;
-        dealerCardSlots[0].visible=true;
-        dealerCardSlots[1].visible=true;
+        userCardSlots[0].visible = true;
+        userCardSlots[1].visible = true;
+        dealerCardSlots[0].visible =true;
+        dealerCardSlots[1].visible = true;
 
-       this.flip(userCardSlots[0],usercard1);
-       this.flip(userCardSlots[1],usercard2);
-       this.flip(dealerCardSlots[0],dealercard1);
+        this.flip(userCardSlots[0],usercard1);
+        this.flip(userCardSlots[1],usercard2);
+        this.flip(dealerCardSlots[0],dealercard1);
    
         //Push alternating cards to the user hand;
         userHand.push(usercard1);
@@ -156,6 +172,7 @@ class Scene1 extends Phaser.Scene{
         dealerHand.push(dealercard1);
         dealerHand.push(dealercard2);
 
+        //For debugging purposes.
         console.log("User hand:" + userHand);
         console.log("Dealer hand: " + dealerHand);
         this.enableButtons();
@@ -164,14 +181,15 @@ class Scene1 extends Phaser.Scene{
     enableButtons(){
         hitButton.setInteractive({useHandCursor: true});
         stayButton.setInteractive({useHandCursor: true});
-     
         hitButton.clearAlpha();
         stayButton.clearAlpha();
-       
      }
 
-    //Handles the 'hit' input on button click
-     hitClick(){
+    /**
+     * @author mgraman (mgraman@mail.uc.edu)
+     * @summary handles the event where the hit button gets clicked.
+     */
+    hitClick(){
          
        userHand.push(draw(deck));
        console.table(userHand);
@@ -190,11 +208,11 @@ class Scene1 extends Phaser.Scene{
        }
     }
 
-     dealClick(){
-         //reset the visibility of card slots
+    dealClick(){
+        //reset the visibility of card slots
 
       this.deal(deck);
-     }
+    }
       
     dealerdecision(){
         console.log("dealer decision");
@@ -232,8 +250,11 @@ class Scene1 extends Phaser.Scene{
        // }
     }
 
-    //Handles the 'stay' input on button click
-     stayClick(){
+    /**
+     * @author mgraman (mgraman@mail.uc.edu)
+     * @summary handles the event where the stay button gets clicked.
+     */
+    stayClick(){
         this.buttonsDisabled();
        
         console.table(dealerHand);
@@ -245,21 +266,24 @@ class Scene1 extends Phaser.Scene{
             callback: this.dealerdecision,
             callbackScope: this,
             loop: false
-          });
+        });
 
     }
     
     //disables buttons
-      buttonsDisabled(){
+    buttonsDisabled(){
          hitButton.alpha = 0.3;
          stayButton.alpha = 0.3;
          hitButton.removeInteractive();
          stayButton.removeInteractive();
-     }
+    }
      
 
-    //Increased the betAmount var by 10.
-     increaseBet() {
+    /**
+    * @author mgraman (mgraman@mail.uc.edu)
+    * @summary handles the increasing in bet amount.
+    */
+    increaseBet() {
         if (!this.cardsDealt) {
             if (betAmount >= cashAmount) {
                 console.log('Did not increase bet amount, player has insufficient funds.');
@@ -272,8 +296,11 @@ class Scene1 extends Phaser.Scene{
         }       
     }
 
-    //Decreases the betAmount var by 10.
-     deceaseBet () {
+    /**
+    * @author mgraman (mgraman@mail.uc.edu)
+    * @summary handles the decreasing in bet amount.
+    */
+    deceaseBet() {
         if (!this.cardsDealt) {
             if ((betAmount === 0)) {
                 console.log('Did not decrease bet amount, player cannot bet less than 0.');
