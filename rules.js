@@ -8,6 +8,7 @@ checkTotal(array,'' or 1)
     if checkTotal result is > 21, call checkTotal a second time 
     and pass in 1 for ace_value to see if counting aces as 1 still
     results in a value over 21
+    @author morganaj
 */
 
 function checkTotal(hand,ace_value){

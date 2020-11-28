@@ -6,8 +6,6 @@ var config = {
 };
 
 let deck=[];
-// let player_hand=[];
-// let dealer_hand=[];
 
 //will grab currency specified from local storage
 let currency = localStorage.getItem("currencySymbol");
@@ -43,6 +41,10 @@ let dealerCardSlots = [];
 
 var game = new Phaser.Game(config);
 
+/*
+Author: morganaj
+creates array of cards
+*/
 function freshDeck() {
     //setup deck array
     var suits = ["C", "D", "H", "S"];
@@ -53,7 +55,10 @@ function freshDeck() {
         }
     }
 }
-
+/*
+Randomizes card array
+author: morganaj
+*/
 function shuffleDeck(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
 

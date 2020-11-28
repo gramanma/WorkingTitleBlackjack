@@ -88,6 +88,10 @@ class Scene1 extends Phaser.Scene{
         cashAmount = startingCash;
     }
 
+    /*
+@author morganaj
+performs GUI card flip
+    */
     flip(card, face) {
         try {
             console.log(card);
@@ -214,6 +218,11 @@ class Scene1 extends Phaser.Scene{
       this.deal(deck);
     }
       
+       /**
+     * @author morganaj (morganaj@mail.uc.edu)
+     * @summary handles the event where the stay button gets clicked.
+     */
+    
     dealerdecision(){
         console.log("dealer decision");
         console.log(checkTotal(dealerHand));
