@@ -37,17 +37,17 @@ function determineWinner(){
     //rules are applied top down
 
     //dealer has blackjack-dealer wins
-    if(dealer_hand.length===2 && hasFaceCard(dealer_hand) && hasAce(dealer_hand)){
+    if(dealerHand.length===2 && hasFaceCard(dealerHand) && hasAce(dealerHand)){
         return "Dealer Wins";
     }
-    player_score=checkTotal(player_hand);
+    player_score=checkTotal(userHand);
    
     //player has five cards without passing 21 - player wins
-    if(player_hand.length==5){
+    if(userHand.length==5){
         return "Player Wins";
     }
 
-    dealer_score = checkTotal(dealer_hand);
+    dealer_score = checkTotal(dealerHand);
     //player and dealer have same total - dealer wins all ties
     if(parseInt(dealer_score) >= parseInt(player_score)){
         return "Dealer Wins";

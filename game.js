@@ -6,8 +6,8 @@ var config = {
 };
 
 let deck=[];
-let player_hand=[];
-let dealer_hand=[];
+// let player_hand=[];
+// let dealer_hand=[];
 
 //will grab currency specified from local storage
 let currency = localStorage.getItem("currencySymbol");
@@ -37,33 +37,9 @@ let dealButton;
 //
 let roundResultText;
 
-let number_of_hits=0;
-
-
-let userslot1;
-let userslot2;
-let dealerslot1;
-let dealerslot2 ;
-let userslot3;
-let userslot4 ;
-let dealerslot3;
-let dealerslot4;
-let userslot5;
-let userslot6 ;
-let dealerslot5;
-let dealerslot6;
-let userslot7 ;
-let userslot8 ;
-let dealerslot7 ;
-let dealerslot8 ;
-let userslot9 ;
-let userslot10 ;
-let dealerslot9 ;
-let dealerslot10 ;
-let userslot11 ;
-let userslot12 ;
-let dealerslot11 ;
-let dealerslot12;
+//used for UI
+let userCardSlots = [];
+let dealerCardSlots = [];
 
 var game = new Phaser.Game(config);
 
@@ -103,6 +79,13 @@ function  enterButtonHoverState(button){
  function enterButtonRestState(button){
     button.setScale(.6);
  }
+
+ function  draw(array) {
+    var selectedIndex = array.shift(); //Removed first element in array and selects it.
+    console.log("Drawn Card: " + selectedIndex); //Log the drawn card.
+    return selectedIndex;
+}
+
 
 
     
