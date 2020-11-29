@@ -1,3 +1,8 @@
+ /**
+     * @author morganaj (morganaj@mail.uc.edu).
+     * @summary check hand totals and applies blackjack rules
+     */
+
 let player_score = 0;  
 let dealer_score = 0;
 

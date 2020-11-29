@@ -41,10 +41,10 @@ let dealerCardSlots = [];
 
 var game = new Phaser.Game(config);
 
-/*
-Author: morganaj
-creates array of cards
-*/
+ /**
+     * @author morganaj (morganaj@mail.uc.edu).
+     * @summary creates array of cards
+     */
 function freshDeck() {
     //setup deck array
     var suits = ["C", "D", "H", "S"];
@@ -55,10 +55,10 @@ function freshDeck() {
         }
     }
 }
-/*
-Randomizes card array
-author: morganaj
-*/
+ /**
+     * @author morganaj (morganaj@mail.uc.edu).
+     * @summary randomizes order of cards in deck array
+     */
 function shuffleDeck(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
 

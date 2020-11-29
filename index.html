@@ -7,14 +7,17 @@
     <link rel="stylesheet" href="styles/style.css">
     <script type="text/javascript">
         let currencycode = "$";
+        var person = {userName:"", currency:currencycode, wallet:100};
 
         function startGame() {
           startCheck();
-          if(localStorage.getItem("userName")){
-          window.location.href="game.html";
+          if(localStorage.getItem("blackjack_userDetails")){
+             window.location.href="game.html";
           }
           var userName=document.getElementById("currentUserName");
-          userName.innerText = localStorage.getItem("userName");
+          var storedUserDetails=JSON.parse(localStorage.getItem("blackjack_userDetails"));
+          userName.innerText = storedUserDetails.userName;
+      //    userName.innerText = localStorage.getItem("blackjack_userName");
         }
 
         function loadFunctions() {
@@ -27,7 +30,8 @@
           var nameInput=document.getElementById("txtUsername");
           var nameButton=document.getElementById("nameSaveButton");
           var userName=document.getElementById("currentUserName");
-          userName.innerText = localStorage.getItem("userName");
+          var storedUserDetails=JSON.parse(localStorage.getItem("blackjack_userDetails"));
+          userName.innerText = storedUserDetails.userName;
           startCheck();
         }
 
@@ -47,14 +51,19 @@
           var nameButton=document.getElementById("nameSaveButton");
           userName=document.getElementById("currentUserName");
           if(nameInput.value !== ""){
-          localStorage.setItem("userName",nameInput.value);
-          userName.innerText = localStorage.getItem("userName");
+              person.userName=nameInput.value;
+              person.currency=currencycode;
+
+            localStorage.setItem("blackjack_userDetails",JSON.stringify(person));
+           // localStorage.setItem("blackjack_userName",nameInput.value);
+            userName.innerText = person.userName;
           }
           else{
             nameButton.disabled = true;
           }
           startCheck();
         }
+
 
         async function fetchCurrency() {
             var endpoint = 'http://ip-api.com/json/?fields=status,message,continent';
@@ -110,20 +119,14 @@
             var startButton=document.getElementById("startButton");
             var nameError=document.getElementById("nameError");
             var valid = true;
-          if(localStorage.getItem("userName") && localStorage.getItem("userName") != ""){
-          nameError.classList.add('d-none');
-          }
-          else{
-          valid = false;
-          nameError.classList.remove('d-none');
-          }
-          /* if(currencycode){
-          currencyError.classList.add('d-none');
+          if(localStorage.getItem("blackjack_userDetails") && localStorage.getItem("blackjack_userDetails") != ""){
+            nameError.classList.add('d-none');
           }
           else{
             valid = false;
-            currencyError.classList.remove('d-none');
-          } */
+            nameError.classList.remove('d-none');
+          }
+         
           if(valid){
             startButton.disabled = false;
           }

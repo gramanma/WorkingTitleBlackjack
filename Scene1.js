@@ -52,7 +52,9 @@ class Scene1 extends Phaser.Scene{
         //properties will be changed after hand dealt
         //will have to set back to these values when buttons are disabled
         this.add.text(350,100, "Dealer", { font: "32px Arial", fill: "#ffffff", align: "center" });
-        this.add.text(350,550, localStorage.getItem("userName"), { font: "32px Arial", fill: "#ffffff", align: "center" });
+        var storedUserDetails=JSON.parse(localStorage.getItem("blackjack_userDetails"));
+
+        this.add.text(350,550, storedUserDetails.userName, { font: "32px Arial", fill: "#ffffff", align: "center" });
 
         dealButton.setInteractive({useHandCursor: true});
         dealButton.clearAlpha();
@@ -88,10 +90,11 @@ class Scene1 extends Phaser.Scene{
         cashAmount = startingCash;
     }
 
-    /*
-@author morganaj
-performs GUI card flip
-    */
+ /**
+     * @author morganaj (morganaj@mail.uc.edu)
+     * @params {card,face} card=existing cardimage, face=cardimage replacement
+     * @summary this method performs the card flip in the UI
+     */
     flip(card, face) {
         try {
             console.log(card);
