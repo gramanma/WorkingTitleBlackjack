@@ -179,11 +179,13 @@ class Scene1 extends Phaser.Scene{
     }
      
     enableDealButton(){
+        dealButton.setScale(.6);
         dealButton.setInteractive({useHandCursor: true});
         dealButton.clearAlpha();
     }
 
     disableDealButton(){
+        dealButton.setScale(.6);
         dealButton.alpha = 0.3;
         dealButton.removeInteractive();
      }
