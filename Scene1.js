@@ -54,8 +54,7 @@ class Scene1 extends Phaser.Scene{
         this.add.text(350,100, "Dealer", { font: "32px Arial", fill: "#ffffff", align: "center" });
         this.add.text(350,550, localStorage.getItem("userName"), { font: "32px Arial", fill: "#ffffff", align: "center" });
 
-        dealButton.setInteractive({useHandCursor: true});
-        dealButton.clearAlpha();
+       this.enableDealButton();
         
       // this.deal(deck);
      //  this.enableButtons();
@@ -175,10 +174,23 @@ class Scene1 extends Phaser.Scene{
         //For debugging purposes.
         console.log("User hand:" + userHand);
         console.log("Dealer hand: " + dealerHand);
+        this.disableDealButton();
         this.enableButtons();
     }
      
+    enableDealButton(){
+        dealButton.setInteractive({useHandCursor: true});
+        dealButton.clearAlpha();
+    }
+
+    disableDealButton(){
+        dealButton.alpha = 0.3;
+        dealButton.removeInteractive();
+     }
+    
     enableButtons(){
+        hitButton.setScale(.6);
+        stayButton.setScale(.6);
         hitButton.setInteractive({useHandCursor: true});
         stayButton.setInteractive({useHandCursor: true});
         hitButton.clearAlpha();
@@ -203,7 +215,7 @@ class Scene1 extends Phaser.Scene{
            if(checkTotal(userHand,1) > 21){
             this.buttonsDisabled();
             roundResultText.text= checkTotal(userHand,1) + "\nPlayer busts.\nDealer Wins!";
-                       
+             this.enableDealButton();          
            }
        }
     }
@@ -222,12 +234,14 @@ class Scene1 extends Phaser.Scene{
             if(checkTotal(dealerHand) > 21){
                 if(checkTotal(dealerHand,1) > 21){
                     roundResultText.text="Dealer busts. \nPlayer Wins!";
+                    this.enableDealButton();    
                     return;
                 }
             }else{
                 if (checkTotal(dealerHand) >= 16) {
                     //dealer stays
                     roundResultText.text=determineWinner();
+                    this.enableDealButton();    
                     return;
                 }else{
                    // if (checkTotal(dealerHand) < 16 && checkTotal(userHand) < 22) {
@@ -272,6 +286,8 @@ class Scene1 extends Phaser.Scene{
     
     //disables buttons
     buttonsDisabled(){
+        hitButton.setScale(.6);
+        stayButton.setScale(.6);
          hitButton.alpha = 0.3;
          stayButton.alpha = 0.3;
          hitButton.removeInteractive();
