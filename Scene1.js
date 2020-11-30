@@ -214,7 +214,7 @@ class Scene1 extends Phaser.Scene{
              roundResultText.text=determineWinner();
              console.log("here");
              var person=JSON.parse(localStorage.getItem("blackjack_userDetails"));
-            this.scoreLabel.text = person.currency + person.wallet;
+             this.scoreLabel.text = person.currency + person.wallet;
            }
        }
     }

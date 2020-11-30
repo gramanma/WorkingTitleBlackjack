@@ -62,6 +62,11 @@ function determineWinner(){
         player_score=checkTotal(userHand,1);
     }
    
+    if(player_score > 21){
+        updateWallet(-1);
+        return "Player Busts. \nDealer Wins!";
+    }
+
     //player has five cards without passing 21 - player wins
     if(userHand.length==5 && player_score < 22){
         updateWallet(1);
@@ -80,6 +85,7 @@ function determineWinner(){
         updateWallet(1);
         return "Player Wins!";
     }
+    console.log("not caught");
 }
 function isAce(card){
     return card.substr(0,1)==="A" ? true : false;
