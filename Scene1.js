@@ -2,10 +2,9 @@ class Scene1 extends Phaser.Scene{
     constructor(){
         super("playGame");
     }
-   
+
     preload() { 
         this.loadBlackjack(100);  
-        this.load.bitmapFont("pixelFont", "assets/font/font.png", "assets/font/font.xml");
     }
 
     create(){
@@ -34,7 +33,7 @@ class Scene1 extends Phaser.Scene{
         .on('pointerover', () => enterButtonHoverState(dealButton))
         .alpha = .2;
 
-        hitButton = this.add.image(710, 420, 'hitButton').setScale(.6);
+        hitButton = this.add.image(710, 450, 'hitButton').setScale(.6);
         //will have to set Interactive after hand is dealt and the buttons should be enabled
         hitButton.on('pointerdown', () => this.hitClick())
         .on('pointerout', () => enterButtonRestState(hitButton))
@@ -43,7 +42,7 @@ class Scene1 extends Phaser.Scene{
         //properties will be changed after hand dealt
         //will have to set back to these values when buttons are disabled
 
-        stayButton = this.add.image(710, 490, 'stayButton').setScale(.6);
+        stayButton = this.add.image(710, 520, 'stayButton').setScale(.6);
          //will have to set Interactive after hand is dealt and the buttons should be enabled
         stayButton.on('pointerdown', () => this.stayClick())
         .on('pointerout', () => enterButtonRestState(stayButton))
@@ -53,14 +52,9 @@ class Scene1 extends Phaser.Scene{
         //properties will be changed after hand dealt
         //will have to set back to these values when buttons are disabled
         this.add.text(350,100, "Dealer", { font: "32px Arial", fill: "#ffffff", align: "center" });
-        
-        var storedUserDetails=JSON.parse(localStorage.getItem("blackjack_userDetails"));
-        this.add.text(350,550, storedUserDetails.userName, { font: "32px Arial", fill: "#ffffff", align: "center" });
+        this.add.text(350,550, localStorage.getItem("userName"), { font: "32px Arial", fill: "#ffffff", align: "center" });
 
-        this.scoreLabel = this.add.bitmapText(520, 560, "pixelFont", "Wallet: " + storedUserDetails.currency + storedUserDetails.wallet  , 32);
-
-        dealButton.setInteractive({useHandCursor: true});
-        dealButton.clearAlpha();
+       this.enableDealButton();
         
       // this.deal(deck);
      //  this.enableButtons();
@@ -93,11 +87,6 @@ class Scene1 extends Phaser.Scene{
         cashAmount = startingCash;
     }
 
- /**
-     * @author morganaj (morganaj@mail.uc.edu)
-     * @params {card,face} card=existing cardimage, face=cardimage replacement
-     * @summary this method performs the card flip in the UI
-     */
     flip(card, face) {
         try {
             console.log(card);
@@ -185,10 +174,25 @@ class Scene1 extends Phaser.Scene{
         //For debugging purposes.
         console.log("User hand:" + userHand);
         console.log("Dealer hand: " + dealerHand);
+        this.disableDealButton();
         this.enableButtons();
     }
      
+    enableDealButton(){
+        dealButton.setScale(.6);
+        dealButton.setInteractive({useHandCursor: true});
+        dealButton.clearAlpha();
+    }
+
+    disableDealButton(){
+        dealButton.setScale(.6);
+        dealButton.alpha = 0.3;
+        dealButton.removeInteractive();
+     }
+    
     enableButtons(){
+        hitButton.setScale(.6);
+        stayButton.setScale(.6);
         hitButton.setInteractive({useHandCursor: true});
         stayButton.setInteractive({useHandCursor: true});
         hitButton.clearAlpha();
@@ -206,15 +210,14 @@ class Scene1 extends Phaser.Scene{
        userCardSlots[userHand.length-1].visible=true;
        this.flip(userCardSlots[userHand.length-1],userHand[userHand.length-1]);
  
+       userCardValue = checkTotal(userHand);
        console.log('New User CardTotal = '+ userCardValue);
        if(checkTotal(userHand) > 21){
            //check a second time counting aces as 1's
            if(checkTotal(userHand,1) > 21){
             this.buttonsDisabled();
-             roundResultText.text=determineWinner();
-             console.log("here");
-             var person=JSON.parse(localStorage.getItem("blackjack_userDetails"));
-             this.scoreLabel.text = person.currency + person.wallet;
+            roundResultText.text= checkTotal(userHand,1) + "\nPlayer busts.\nDealer Wins!";
+             this.enableDealButton();          
            }
        }
     }
@@ -225,57 +228,42 @@ class Scene1 extends Phaser.Scene{
       this.deal(deck);
     }
       
-       /**
-     * @author morganaj (morganaj@mail.uc.edu)
-     * @summary handles the event where the stay button gets clicked.
-     */
-    
     dealerdecision(){
-        var person;
         console.log("dealer decision");
         console.log(checkTotal(dealerHand));
         console.log(checkTotal(dealerHand,1));
-   
-        if(checkTotal(dealerHand) == 21){
-            roundResultText.text=determineWinner();
-            person=JSON.parse(localStorage.getItem("blackjack_userDetails"));
-            this.scoreLabel.text = person.currency + person.wallet;
-            return;
-        }
-        if(checkTotal(dealerHand) > 21){
-            if(checkTotal(dealerHand,1) > 21){
-                roundResultText.text=determineWinner();
-                person=JSON.parse(localStorage.getItem("blackjack_userDetails"));
-                this.scoreLabel.text = person.currency + person.wallet;
-               
-                return;
-            }
-        }else{
-            if (checkTotal(dealerHand) < 16) {
-               
-                // if (checkTotal(dealerHand) < 16 && checkTotal(userHand) < 22) {
-                    dealerHand.push(draw(deck));
-                    console.log(dealerHand[dealerHand.length-1]);
-                    dealerCardSlots[dealerHand.length-1].visible=true;
-                    console.log("dealer hits");
-                
-                    this.flip(dealerCardSlots[dealerHand.length-1],dealerHand[dealerHand.length-1]);
-                    this.time.addEvent({
-                        delay: 1000,
-                        callback: this.dealerdecision,
-                        callbackScope: this,
-                        loop: false
-                      });
-
+        for(x=1; x< 10; x++){
+            if(checkTotal(dealerHand) > 21){
+                if(checkTotal(dealerHand,1) > 21){
+                    roundResultText.text="Dealer busts. \nPlayer Wins!";
+                    this.enableDealButton();    
+                    return;
+                }
             }else{
-                 //dealer stays
-                 roundResultText.text=determineWinner();
-                 person=JSON.parse(localStorage.getItem("blackjack_userDetails"));
-                 this.scoreLabel.text = person.currency + person.wallet;
-                 return;
+                if (checkTotal(dealerHand) >= 16) {
+                    //dealer stays
+                    roundResultText.text=determineWinner();
+                    this.enableDealButton();    
+                    return;
+                }else{
+                   // if (checkTotal(dealerHand) < 16 && checkTotal(userHand) < 22) {
+                        dealerHand.push(draw(deck));
+                        dealerCardSlots[dealerHand.length-1].visible=true;
+                        console.log(checkTotal(dealerHand));
+                    
+                        this.flip(dealerCardSlots[dealerHand.length-1],dealerHand[dealerHand.length-1]);
+                        this.time.addEvent({
+                            delay: 1000,
+                            callback: this.dealerdecision,
+                            callbackScope: this,
+                            loop: false
+                          });
+                    // }
+                }
             }
-        }   
-
+           
+           
+        }
     }
 
     /**
@@ -300,6 +288,8 @@ class Scene1 extends Phaser.Scene{
     
     //disables buttons
     buttonsDisabled(){
+        hitButton.setScale(.6);
+        stayButton.setScale(.6);
          hitButton.alpha = 0.3;
          stayButton.alpha = 0.3;
          hitButton.removeInteractive();
@@ -340,6 +330,4 @@ class Scene1 extends Phaser.Scene{
             console.log('Did not decrease bet amount, cards already dealt.');
         } 
     }
-
-   
 }
