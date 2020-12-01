@@ -13,10 +13,14 @@ let deck=[];
 let currency = localStorage.getItem("currencySymbol");
 
 //Bet amount for player
-let betAmount = 0;
+let betAmount = 10;
+let betLabel = betAmount
+
 
 //Current amount of money for player.
-let cashAmount = 0;
+let cashAmount = 100;
+let cashLabel = cashAmount
+
 
 //Have the cards been dealt?
 let cardsDealt = false;
@@ -33,6 +37,8 @@ let dealerHand = [];
 let stayButton;
 let hitButton;
 let dealButton;
+let raiseBetButton;
+let lowerBetButton;
 
 //
 let roundResultText;

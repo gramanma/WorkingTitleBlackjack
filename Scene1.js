@@ -7,9 +7,24 @@ class Scene1 extends Phaser.Scene{
         this.loadBlackjack(100);  
     }
 
+    Currency() {
+        if (typeof this.cashLabel === 'undefined'){
+        this.cashLabel = this.add.text(85,550, cashAmount, { font: "32px Arial", fill: "#ffffff", align: "center" });
+        this.betLabel =this.add.text(550,375, betAmount, { font: "32px Arial", fill: "#ffffff", align: "center" });
+        }
+        else{ this.cashLabel.text = (cashAmount);
+         this.betLabel.text = (this.betLabel); }
+    }
+
     create(){
+        
+       
         this.add.image(400, 300, 'tabletop');
         this.add.image(80, 110, 'cardback');
+
+       // this.Currency();
+      
+        
 
         //cardslots
         for(i=0; i < 12; i++){
@@ -25,8 +40,25 @@ class Scene1 extends Phaser.Scene{
          roundResultText = this.add.text(540, 100, "", { fontSize: '20px', fill: '#fff' });
      
         //TODO: Add buttons for raising and lowering the bet.
+      
 
+        raiseBetButton= this.add.image(600, 450, 'raiseBet').setScale(.3) ;;
+
+        raiseBetButton.on('pointerdown', () => this.increaseBet())
+        .on('pointerout', () => enterButtonRestState(raiseBetButton))
+        .on('pointerover', () => enterButtonHoverState(raiseBetButton))
+        .alpha = .2;
+
+        lowerBetButton = this.add.image(550, 450, 'lowerBet').setScale(.3);
+
+        lowerBetButton.on('pointerdown', () => this.deceaseBet())
+        .on('pointerout', () => enterButtonRestState(lowerBetButton))
+        .on('pointerover', () => enterButtonHoverState(lowerBetButton))
+        .alpha = .2;
+
+        
         dealButton = this.add.image(710, 350, 'dealButton').setScale(.6);
+       
         //will have to set Interactive after hand is dealt and the buttons should be enabled
         dealButton.on('pointerdown', () => this.deal(deck))
         .on('pointerout', () => enterButtonRestState(dealButton))
@@ -34,6 +66,7 @@ class Scene1 extends Phaser.Scene{
         .alpha = .2;
 
         hitButton = this.add.image(710, 450, 'hitButton').setScale(.6);
+        
         //will have to set Interactive after hand is dealt and the buttons should be enabled
         hitButton.on('pointerdown', () => this.hitClick())
         .on('pointerout', () => enterButtonRestState(hitButton))
@@ -43,6 +76,7 @@ class Scene1 extends Phaser.Scene{
         //will have to set back to these values when buttons are disabled
 
         stayButton = this.add.image(710, 520, 'stayButton').setScale(.6);
+        
          //will have to set Interactive after hand is dealt and the buttons should be enabled
         stayButton.on('pointerdown', () => this.stayClick())
         .on('pointerout', () => enterButtonRestState(stayButton))
@@ -53,10 +87,20 @@ class Scene1 extends Phaser.Scene{
         //will have to set back to these values when buttons are disabled
         this.add.text(350,100, "Dealer", { font: "32px Arial", fill: "#ffffff", align: "center" });
         this.add.text(350,550, localStorage.getItem("userName"), { font: "32px Arial", fill: "#ffffff", align: "center" });
+        this.add.text(75,500, "Wallet:", { font: "32px Arial", fill: "#ffffff", align: "center" });
+        this.add.text(550,325, "Bet", { font: "32px Arial", fill: "#ffffff", align: "center" });
+        this.cashLabel =this.add.text(85,550, cashAmount, { font: "32px Arial", fill: "#ffffff", align: "center" });
+        this.betLabel =this.add.text(550,375, betAmount, { font: "32px Arial", fill: "#ffffff", align: "center" });
+      
+        
+         
+
+
+
 
        this.enableDealButton();
         
-      // this.deal(deck);
+      // this.deal(deck);as
      //  this.enableButtons();
 
     }
@@ -75,6 +119,9 @@ class Scene1 extends Phaser.Scene{
         this.load.image('dealButton','assets/deal_button.png');
         this.load.image('backflip', 'assets/cardback3.png');
         this.load.image('dealButton','assets/hit_button.png');
+        this.load.image('dealButton','assets/right-arrow.png');
+        this.load.image('raiseBet','assets/right-arrow.png');
+        this.load.image('lowerBet','assets/left-arrow.png');
         
         //Create fresh deck and deal it.
         freshDeck();
@@ -84,7 +131,7 @@ class Scene1 extends Phaser.Scene{
         deck = shuffleDeck(deck);   
 
         //Starting cash amount.
-        cashAmount = startingCash;
+        
     }
 
     flip(card, face) {
@@ -182,21 +229,44 @@ class Scene1 extends Phaser.Scene{
         dealButton.setScale(.6);
         dealButton.setInteractive({useHandCursor: true});
         dealButton.clearAlpha();
+
+        raiseBetButton.setScale(.6);
+        lowerBetButton.setScale(.6);
+        raiseBetButton.setInteractive({useHandCursor: true});
+        lowerBetButton.setInteractive({useHandCursor: true});
+        raiseBetButton.clearAlpha();
+        lowerBetButton.clearAlpha();
     }
 
     disableDealButton(){
         dealButton.setScale(.6);
         dealButton.alpha = 0.3;
         dealButton.removeInteractive();
+
+      
+
+        raiseBetButton.setScale(.6);
+        raiseBetButton.alpha = 0.3;
+        raiseBetButton.removeInteractive();
+
+        lowerBetButton.removeInteractive();
+        lowerBetButton.alpha = 0.3;
+        lowerBetButton.setScale(.6);
+
+        
      }
     
     enableButtons(){
         hitButton.setScale(.6);
         stayButton.setScale(.6);
+        
         hitButton.setInteractive({useHandCursor: true});
         stayButton.setInteractive({useHandCursor: true});
+       
         hitButton.clearAlpha();
         stayButton.clearAlpha();
+
+        
      }
 
     /**
@@ -236,6 +306,8 @@ class Scene1 extends Phaser.Scene{
             if(checkTotal(dealerHand) > 21){
                 if(checkTotal(dealerHand,1) > 21){
                     roundResultText.text="Dealer busts. \nPlayer Wins!";
+                    
+                  
                     this.enableDealButton();    
                     return;
                 }
@@ -243,7 +315,8 @@ class Scene1 extends Phaser.Scene{
                 if (checkTotal(dealerHand) >= 16) {
                     //dealer stays
                     roundResultText.text=determineWinner();
-                    this.enableDealButton();    
+                    this.enableDealButton(); 
+
                     return;
                 }else{
                    // if (checkTotal(dealerHand) < 16 && checkTotal(userHand) < 22) {
@@ -290,10 +363,19 @@ class Scene1 extends Phaser.Scene{
     buttonsDisabled(){
         hitButton.setScale(.6);
         stayButton.setScale(.6);
+        
          hitButton.alpha = 0.3;
          stayButton.alpha = 0.3;
+        
          hitButton.removeInteractive();
          stayButton.removeInteractive();
+         
+         lowerBetButton.setScale(.6);
+        raiseBetButton.setScale(.6);
+         lowerBetButton.alpha = 0.3;
+         raiseBetButton.alpha = 0.3;
+         raiseBetButton.removeInteractive();
+         lowerBetButton.removeInteractive();
     }
      
 
@@ -308,6 +390,8 @@ class Scene1 extends Phaser.Scene{
             } else {
                 betAmount = betAmount + 10;
                 console.log('Current bet amount: (increased)' + betAmount);
+                this.betLabel.text=(betAmount)
+                
             }
         } else {
             console.log('Did not increase bet amount, cards already dealt.');
@@ -325,6 +409,7 @@ class Scene1 extends Phaser.Scene{
             } else {
                 betAmount = betAmount - 10;
                 console.log('Current bet amount: (decreased)' + betAmount);
+                this.betLabel.text=(betAmount)
             }
         } else {
             console.log('Did not decrease bet amount, cards already dealt.');

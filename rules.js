@@ -1,3 +1,4 @@
+
 let player_score = 0;  
 let dealer_score = 0;
 
@@ -9,6 +10,7 @@ checkTotal(array,'' or 1)
     and pass in 1 for ace_value to see if counting aces as 1 still
     results in a value over 21
 */
+
 
 function checkTotal(hand,ace_value){
     let total=0;
@@ -40,23 +42,38 @@ function determineWinner(){
 
     //dealer has blackjack-dealer wins
     if(dealerHand.length==2 && hasFaceCard(dealerHand) && hasAce(dealerHand)){
+        
+        console.log(cashAmount-betAmount)
+        
         return "Dealer has Blackjack! \nDealer Wins!";
     }
     player_score=checkTotal(userHand);
    
     //player has five cards without passing 21 - player wins
     if(userHand.length==5){
+
+        console.log(cashAmount+betAmount)
+       // this.cashLabel.text = (cashAmount+betAmount)
         return "Five card Charlie! \nPlayer Wins!";
     }
 
     dealer_score = checkTotal(dealerHand);
     //player and dealer have same total - dealer wins all ties
     if(parseInt(dealer_score) >= parseInt(player_score)){
-        return "Dealer Wins!";
+      
+        console.log(cashAmount=cashAmount-betAmount)
+        console.log('test')
+        cashAmount= (cashAmount-betAmount)
+        
+        console.log('test')
+        return "Dealer Wins!" ;
     }
-
+    
      //player greater than dealer - player wins
      if(parseInt(player_score) < 22 && parseInt(player_score) > parseInt(dealer_score)){
+        cashAmount= cashAmount+betAmount; 
+        console.log('test3')
+       
         return "Player Wins!";
     }
 }
