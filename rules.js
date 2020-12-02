@@ -105,7 +105,7 @@ function hasFaceCard(hand){
      });
      return false;   
 }
-
+ 
   /**
 * @author morganaj (morganaj@mail.uc.edu)
 * @params {amount} amount to modify current wallet
