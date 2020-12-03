@@ -84,6 +84,12 @@ function determineWinner(){
         updateWallet(1);
         return "Player Wins!";
     }
+
+    if(player_score > 21){
+        updateWallet(-1);
+        return "Player Busts. \nDealer Wins!";
+    }
+
     console.log("not caught");
 }
 function isAce(card){
@@ -105,7 +111,7 @@ function hasFaceCard(hand){
      });
      return false;   
 }
-
+ 
   /**
 * @author morganaj (morganaj@mail.uc.edu)
 * @params {amount} amount to modify current wallet
@@ -116,10 +122,10 @@ function updateWallet(modifier){
    var storedUserDetails=JSON.parse(localStorage.getItem("blackjack_userDetails"));
    var person = {userName:storedUserDetails.userName, currency:storedUserDetails.currency, wallet:storedUserDetails.wallet};
   
-   person.wallet = parseInt(storedUserDetails.wallet) + parseInt(modifier)*10;
+   person.wallet = parseInt(storedUserDetails.wallet) + parseInt(modifier)*parseInt(betAmount);
 
    localStorage.setItem("blackjack_userDetails",JSON.stringify(person));
-   
+      
 
 }
     

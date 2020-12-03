@@ -8,16 +8,16 @@ var config = {
 let deck=[];
 
 //will grab currency specified from local storage
-let currency = localStorage.getItem("currencySymbol");
+let currency; 
 
 //Bet amount for player
 let betAmount = 10;
-let betLabel = betAmount
+//let betLabel = betAmount
 
 
 //Current amount of money for player.
 let cashAmount = 100;
-let cashLabel = cashAmount
+//let cashLabel = cashAmount
 
 
 //Have the cards been dealt?

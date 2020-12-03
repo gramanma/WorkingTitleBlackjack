@@ -7,24 +7,11 @@ class Scene1 extends Phaser.Scene{
         this.loadBlackjack(100);  
     }
 
-    Currency() {
-        if (typeof this.cashLabel === 'undefined'){
-        this.cashLabel = this.add.text(85,550, cashAmount, { font: "32px Arial", fill: "#ffffff", align: "center" });
-        this.betLabel =this.add.text(550,375, betAmount, { font: "32px Arial", fill: "#ffffff", align: "center" });
-        }
-        else{ this.cashLabel.text = (cashAmount);
-         this.betLabel.text = (this.betLabel); }
-    }
-
     create(){
         
        
         this.add.image(400, 300, 'tabletop');
         this.add.image(80, 110, 'cardback');
-
-       // this.Currency();
-      
-        
 
         //cardslots
         for(i=0; i < 12; i++){
@@ -33,23 +20,38 @@ class Scene1 extends Phaser.Scene{
         }
            
         for(i = 0; i < 12 ; i++){
+            
             userCardSlots[i].visible = false;
             dealerCardSlots[i].visible = false;
         }
-      
+             
          roundResultText = this.add.text(540, 100, "", { fontSize: '20px', fill: '#fff' });
-     
+          
+        
+
+         this.scoreLabel = this.add.bitmapText(50, 550, "pixelFont", "Wallet: "  , 32);
+
+         var person=JSON.parse(localStorage.getItem("blackjack_userDetails"));
+        
+        this.scoreLabel.text = "Wallet: \n" + person.currency + person.wallet;
+                         
+        this.betLabel = this.add.bitmapText(550, 440, "pixelFont", "Wallet: "  , 32);
+
+        this.betLabel.text=person.currency + betAmount;
+
+
+        currency=person.currency;
         //TODO: Add buttons for raising and lowering the bet.
       
 
-        raiseBetButton= this.add.image(600, 450, 'raiseBet').setScale(.3) ;;
+        raiseBetButton= this.add.image(610, 450, 'raiseBet').setScale(.3) ;
 
         raiseBetButton.on('pointerdown', () => this.increaseBet())
         .on('pointerout', () => enterButtonRestState(raiseBetButton))
         .on('pointerover', () => enterButtonHoverState(raiseBetButton))
         .alpha = .2;
 
-        lowerBetButton = this.add.image(550, 450, 'lowerBet').setScale(.3);
+        lowerBetButton = this.add.image(520, 450, 'lowerBet').setScale(.3);
 
         lowerBetButton.on('pointerdown', () => this.deceaseBet())
         .on('pointerout', () => enterButtonRestState(lowerBetButton))
@@ -87,22 +89,19 @@ class Scene1 extends Phaser.Scene{
         //will have to set back to these values when buttons are disabled
         this.add.text(350,100, "Dealer", { font: "32px Arial", fill: "#ffffff", align: "center" });
         this.add.text(350,550, localStorage.getItem("userName"), { font: "32px Arial", fill: "#ffffff", align: "center" });
-        this.add.text(75,500, "Wallet:", { font: "32px Arial", fill: "#ffffff", align: "center" });
+      //  this.add.text(75,500, "Wallet:", { font: "32px Arial", fill: "#ffffff", align: "center" });
         this.add.text(550,325, "Bet", { font: "32px Arial", fill: "#ffffff", align: "center" });
-        this.cashLabel =this.add.text(85,550, cashAmount, { font: "32px Arial", fill: "#ffffff", align: "center" });
-        this.betLabel =this.add.text(550,375, betAmount, { font: "32px Arial", fill: "#ffffff", align: "center" });
+      //  this.cashLabel =this.add.text(85,550, cashAmount, { font: "32px Arial", fill: "#ffffff", align: "center" });
+     //   this.betLabel =this.add.text(550,375, betAmount, { font: "32px Arial", fill: "#ffffff", align: "center" });
       
-        
-         
-
-
-
-
        this.enableDealButton();
-        
+       
+ 
+
       // this.deal(deck);as
      //  this.enableButtons();
 
+     
     }
 
     /**
@@ -129,6 +128,8 @@ class Scene1 extends Phaser.Scene{
             this.load.image(element, 'assets/' + element + '.png');
         });
         deck = shuffleDeck(deck);   
+
+        this.load.bitmapFont("pixelFont", "assets/font/font.png", "assets/font/font.xml");
 
         //Starting cash amount.
         
@@ -286,8 +287,10 @@ class Scene1 extends Phaser.Scene{
            //check a second time counting aces as 1's
            if(checkTotal(userHand,1) > 21){
             this.buttonsDisabled();
-            roundResultText.text= checkTotal(userHand,1) + "\nPlayer busts.\nDealer Wins!";
-             this.enableDealButton();          
+
+            roundResultText.text= determineWinner();
+            this.updateWalletDisplay();
+            this.enableDealButton();          
            }
        }
     }
@@ -298,46 +301,108 @@ class Scene1 extends Phaser.Scene{
       this.deal(deck);
     }
       
+       /**
+     * @author morganaj (morganaj@mail.uc.edu)
+     * @summary handles the event where the stay button gets clicked.
+     */
+
     dealerdecision(){
+        var person;
         console.log("dealer decision");
         console.log(checkTotal(dealerHand));
         console.log(checkTotal(dealerHand,1));
-        for(x=1; x< 10; x++){
-            if(checkTotal(dealerHand) > 21){
-                if(checkTotal(dealerHand,1) > 21){
-                    roundResultText.text="Dealer busts. \nPlayer Wins!";
-                    
+   
+        if(checkTotal(dealerHand) == 21){
+            roundResultText.text=determineWinner();
+                      
+            this.updateWalletDisplay();
+                  
+            this.enableDealButton();    
+            return;
+        }
+        if(checkTotal(dealerHand) > 21){
+            if(checkTotal(dealerHand,1) > 21){
+                roundResultText.text=determineWinner();
+                          
+                this.updateWalletDisplay();
+                  
+                this.enableDealButton();    
+               
+                return;
+            }
+        }else{
+            if (checkTotal(dealerHand) < 16) {
+               
+                // if (checkTotal(dealerHand) < 16 && checkTotal(userHand) < 22) {
+                    dealerHand.push(draw(deck));
+                    console.log(dealerHand[dealerHand.length-1]);
+                    dealerCardSlots[dealerHand.length-1].visible=true;
+                    console.log("dealer hits");
+                
+                    this.flip(dealerCardSlots[dealerHand.length-1],dealerHand[dealerHand.length-1]);
+                    this.time.addEvent({
+                        delay: 1000,
+                        callback: this.dealerdecision,
+                        callbackScope: this,
+                        loop: false
+                      });
+
+            }else{
+                 //dealer stays
+                 roundResultText.text=determineWinner();
+                             
+                    this.updateWalletDisplay();
                   
                     this.enableDealButton();    
-                    return;
-                }
-            }else{
-                if (checkTotal(dealerHand) >= 16) {
-                    //dealer stays
-                    roundResultText.text=determineWinner();
-                    this.enableDealButton(); 
-
-                    return;
-                }else{
-                   // if (checkTotal(dealerHand) < 16 && checkTotal(userHand) < 22) {
-                        dealerHand.push(draw(deck));
-                        dealerCardSlots[dealerHand.length-1].visible=true;
-                        console.log(checkTotal(dealerHand));
-                    
-                        this.flip(dealerCardSlots[dealerHand.length-1],dealerHand[dealerHand.length-1]);
-                        this.time.addEvent({
-                            delay: 1000,
-                            callback: this.dealerdecision,
-                            callbackScope: this,
-                            loop: false
-                          });
-                    // }
-                }
+                 return;
             }
-           
-           
-        }
+        }   
+
     }
+
+
+    // dealerdecision(){
+    //     console.log("dealer decision");
+    //     console.log(checkTotal(dealerHand));
+    //     console.log(checkTotal(dealerHand,1));
+    //     // for(x=1; x< 10; x++){
+    //         if(checkTotal(dealerHand) > 21){
+    //             if(checkTotal(dealerHand,1) > 21){
+    //                 roundResultText.text=determineWinner();
+                    
+    //                 this.updateWalletDisplay();
+                  
+    //                 this.enableDealButton();    
+    //                 return;
+    //             }
+    //         }else{
+    //             if (checkTotal(dealerHand) >= 16) {
+    //                 //dealer stays
+    //                 roundResultText.text=determineWinner();
+    //                 this.updateWalletDisplay();
+    //                 this.enableDealButton(); 
+
+    //                 return;
+    //             }else{
+                 
+    //                     dealerHand.push(draw(deck));
+    //                     dealerCardSlots[dealerHand.length-1].visible=true;
+    //                     console.log(checkTotal(dealerHand));
+                    
+    //                     this.flip(dealerCardSlots[dealerHand.length-1],dealerHand[dealerHand.length-1]);
+    //                     this.time.addEvent({
+    //                         delay: 1000,
+    //                         callback: this.dealerdecision,
+    //                         callbackScope: this,
+    //                         loop: false
+    //                       });
+                
+    //             }
+    //         }
+           
+           
+    //    // }
+    // }
 
     /**
      * @author mgraman (mgraman@mail.uc.edu)
@@ -390,7 +455,8 @@ class Scene1 extends Phaser.Scene{
             } else {
                 betAmount = betAmount + 10;
                 console.log('Current bet amount: (increased)' + betAmount);
-                this.betLabel.text=(betAmount)
+               
+                this.betLabel.text=currency + (betAmount)
                 
             }
         } else {
@@ -409,10 +475,15 @@ class Scene1 extends Phaser.Scene{
             } else {
                 betAmount = betAmount - 10;
                 console.log('Current bet amount: (decreased)' + betAmount);
-                this.betLabel.text=(betAmount)
+                this.betLabel.text=currency + (betAmount)
             }
         } else {
             console.log('Did not decrease bet amount, cards already dealt.');
         } 
+    }
+
+    updateWalletDisplay(){
+       var person=JSON.parse(localStorage.getItem("blackjack_userDetails"));
+       this.scoreLabel.text = "Wallet: " + person.currency + person.wallet;
     }
 }
